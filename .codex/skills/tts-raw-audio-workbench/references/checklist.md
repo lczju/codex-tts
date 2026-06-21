@@ -1,4 +1,4 @@
-﻿# Raw Audio Workbench Checklist
+# Raw Audio Workbench Checklist
 
 ## Asset checks
 

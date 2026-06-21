@@ -1,5 +1,11 @@
 .agents/
-.codex/
+.codex/*
+!.codex/skills/
+.codex/skills/*
+!.codex/skills/tts-raw-audio-workbench/
+!.codex/skills/tts-raw-audio-workbench/SKILL.md
+!.codex/skills/tts-raw-audio-workbench/references/
+!.codex/skills/tts-raw-audio-workbench/references/checklist.md
 AGENTS.md
 docs/superpowers/
 server-notes/guizang-ppt-skill.md

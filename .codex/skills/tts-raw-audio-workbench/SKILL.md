@@ -1,4 +1,4 @@
-﻿---
+---
 name: tts-raw-audio-workbench
 description: Use when updating this repository's raw-audio homepage, regenerating spectrogram assets, refreshing raw-samples.json, or maintaining the dataset child page before real model outputs are available.
 ---

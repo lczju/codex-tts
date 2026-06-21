@@ -66,8 +66,9 @@ project0/
   scripts/
     prepare_aishell3.py
     generate_sample_spectrograms.py
-  skills/
-    tts-raw-audio-workbench/
+  .codex/
+    skills/
+      tts-raw-audio-workbench/
 ```
 
 ## 当前页面职责
