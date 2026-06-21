@@ -1,0 +1,18 @@
+{
+  "archive": "D:\\codex\\project0\\datasets\\downloads\\data_aishell3.tgz",
+  "selected_speaker": "SSB0005",
+  "selected_speaker_info": {
+    "speaker_id": "SSB0005",
+    "utterance_count": 467,
+    "duration_hours": 0.673,
+    "age_group": "B",
+    "gender": "female",
+    "accent": "north"
+  },
+  "extracted_utterance_count": 467,
+  "include_test": false,
+  "manifest_path": "D:\\codex\\project0\\datasets\\raw\\public\\aishell3\\manifest.csv",
+  "speaker_summary_path": "D:\\codex\\project0\\datasets\\raw\\public\\aishell3\\speaker_summary.csv",
+  "metadata_path": "D:\\codex\\project0\\datasets\\raw\\speaker_a\\metadata.csv",
+  "wavs_dir": "D:\\codex\\project0\\datasets\\raw\\speaker_a\\wavs"
+}

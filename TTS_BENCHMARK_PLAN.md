@@ -1,216 +1,148 @@
-# TTS 微调与效果对比计划
+﻿# TTS 微调与效果对比计划
 
 ## 1. 项目目标
 
-搭建一套低学习成本、低经济成本的 TTS 实验流程，用来对比 VITS、CosyVoice，以及后续可能加入的 VALL-E 类方法。
+搭建一套低成本、可重复、便于试听对比的中文 TTS 实验流程，用来对比 `CosyVoice`、`VITS`，并为后续可能加入的 `VALL-E` 类方案预留位置。
 
 这个项目要支持：
 
-- 在云端 GPU 服务器上进行模型推理或小规模微调。
-- 使用同一批测试文本生成标准化音频样例。
-- 把云端生成的音频下载到本地 Windows 电脑。
-- 用本地网页展示不同模型的合成效果。
-- 记录主观评分、备注和后续可扩展的客观指标。
+- 在云端 GPU 机器上运行推理或小规模微调
+- 使用同一批测试文本生成标准化音频样例
+- 将结果下载回本地 Windows 环境统一试听与记录
+- 用静态网页展示测试文本、音频、备注和主观评分
 
-## 2. 当前实现条件
+## 2. 当前实际状态
 
-- 本地电脑是 Windows。
-- 本地没有 NVIDIA 显卡。
-- 本地电脑主要负责：
-  - 整理数据集。
-  - 编辑文本和元数据。
-  - 开发网页展示页面。
-  - 浏览和对比生成结果。
-- 模型训练、微调和较重的推理任务放到云端 GPU 机器上。
-- 本地和服务器通讯使用 MobaXterm，主要用到：
-  - SSH 终端。
-  - SFTP 文件传输。
-  - SSH tunnel，用于访问远程 Gradio、FastAPI、Jupyter 等网页服务。
+截至 `2026-06-22`，项目状态如下：
 
-## 3. 低成本平台策略
+- 已完成主试听评分页 `web/index.html`
+- 已完成数据集展示页 `web/dataset.html`
+- 已产出一个演示 deck：`outputs/tts-project-deck/index.html`
+- 已固定 `15` 条测试文本，覆盖基础发音、数字时间、中英混合、英文、情绪、长句稳定性等场景
+- 已生成 `CosyVoice` / `VITS` 占位结果 JSON
+- 已完成 AISHELL-3 单说话人子集抽取，当前 `speaker_a` 有 `467` 条训练音频
+- 已加入可复用的数据准备脚本 `scripts/prepare_aishell3.py`
 
-### 起步推荐
+仍未完成：
 
-第一阶段优先使用按小时计费的 GPU 租赁平台，例如 AutoDL、恒源云、趋动云或类似服务。
+- 真实 `CosyVoice` 推理结果回填
+- 真实 `VITS` baseline 回填
+- 实验日志模板
+- 自动化评测脚本
+- 中文编码统一修复
 
-原因：
+## 3. 当前工作原则
 
-- 学习成本比直接管理阿里云 GPU ECS 低。
-- 通常有现成的 PyTorch/CUDA 镜像。
-- 开机、关机、上传文件、下载结果更直接。
-- 更适合短时间实验、小数据微调和快速试错。
+- 本地只做轻任务：数据整理、页面展示、试听和评分
+- 云端只做真正需要 GPU 的任务：推理、微调、批量导出音频
+- 先跑通最小闭环，再扩模型、扩流程、扩工程复杂度
 
-### 什么时候再考虑阿里云 ECS
+## 4. 当前可展示成果
 
-阿里云 GPU ECS 更适合后续阶段，例如：
+### 页面层
 
-- 需要长期运行公网服务。
-- 需要稳定域名或固定公网访问。
-- 需要多人协作。
-- 需要更接近生产环境的部署方式。
+- `web/index.html`：主工作台，已支持 case 切换、模型筛选、评分、备注、导入导出 JSON
+- `web/dataset.html`：数据集说明页，展示 AISHELL-3 和当前抽取子集信息
+- `outputs/tts-project-deck/index.html`：对外演示用网页 deck
 
-第一阶段不建议直接上阿里云 GPU ECS，因为会额外增加驱动、CUDA、安全组、磁盘、网络和费用管理的复杂度。
+### 数据层
 
-## 4. 推荐 GPU 配置
+- `web/data/results.json`：`15` 个测试用例，对应 `30` 条占位结果
+- `datasets/raw/speaker_a/metadata.csv`：当前训练子集元数据
+- `datasets/raw/speaker_a/wavs/`：已抽取 `467` 条真实 wav
+- `datasets/raw/speaker_a/source_summary.json`：数据来源摘要
 
-起步优先考虑：
+## 5. 阶段计划更新
 
-- RTX 3090 24GB
-- RTX 4090 24GB
-- NVIDIA A10 24GB
+### 阶段 A：展示工作台
 
-第一阶段不建议租 A100/H100，成本太高，容易把预算花在环境配置和试错上。
+状态：已完成基础版
 
-T4 16GB 可以用于轻量推理，但做微调会比较吃紧。
+已完成：
 
-## 5. 总体工作流
+- 固定测试文本
+- 建立结果 JSON 结构
+- 实现主观评分字段
+- 实现本地导入导出
 
-```text
-Windows 本地电脑
-  |
-  | MobaXterm SSH / SFTP
-  v
-云端 GPU 服务器
-  - 配置环境
-  - 跑预训练模型推理
-  - 跑小规模微调
-  - 导出 wav 音频
-  |
-  | SFTP 下载结果
-  v
-Windows 本地网页对比页面
-```
+后续补强：
 
-核心原则是：**本地做轻任务，云端只做真正需要 GPU 的任务。**
+- 修复编码
+- 增加“当前数据版本 / 最后更新时间”提示
+- 增加结果统计摘要
 
-## 6. 阶段计划
+### 阶段 B：CosyVoice 最小闭环
 
-### 第 1 周：本地音频对比网页
+状态：下一优先级
 
-目标：先做一个本地静态网页，用来对比不同 TTS 方法生成的音频。
+目标：
 
-任务：
-
-- 固化项目计划文档。
-- 创建一个本地网页对比界面。
-- 支持切换测试用例。
-- 支持按模型筛选。
-- 展示测试文本、模型名称、音频播放器、备注和评分。
-- 定义统一的结果目录和 JSON 数据格式。
+- 在云端 GPU 上对 `15` 条测试文本运行一轮 `CosyVoice` pretrained inference
+- 下载生成的 wav
+- 回填到 `web/audio/cosyvoice/`
+- 更新 `web/data/results.json`
 
 交付物：
 
-- 一个可以直接用浏览器打开的本地 HTML 页面。
+- 一组真实 `CosyVoice` 样音
+- 页面中可直接播放和评分的 `CosyVoice` 结果
 
-### 第 2 周：CosyVoice 预训练模型推理
+### 阶段 C：VITS baseline
 
-目标：先在云端 GPU 上跑通 CosyVoice 预训练推理，不急着微调。
+状态：数据已准备到可启动阶段
 
-任务：
+当前基础：
 
-- 按小时租一台 GPU 机器。
-- 使用 MobaXterm 连接服务器。
-- 准备 Python/PyTorch/CUDA 环境。
-- 跑通 CosyVoice 预训练推理。
-- 使用固定测试文本生成音频。
-- 下载生成的 wav 文件。
-- 把 CosyVoice 结果加入本地对比网页。
+- `speaker_a` 数据已落地
+- 当前规模约 `467` 条、约 `0.673` 小时
 
-交付物：
+下一步：
 
-- 一组 CosyVoice 生成音频。
-- 网页中可以试听这些结果。
-
-### 第 3 周：VITS 小数据微调
-
-目标：用小规模单说话人数据微调一个 VITS baseline。
-
-任务：
-
-- 准备 30 分钟到 2 小时的干净单说话人音频。
-- 统一音频格式。
-- 准备 metadata。
-- 跑 VITS 预处理。
-- 启动小规模微调实验。
-- 使用同一批测试文本生成结果。
-- 下载生成音频。
-- 把 VITS 结果加入本地对比网页。
+- 确定 VITS 使用的具体代码仓库与预处理格式
+- 将 `metadata.csv` 转为目标仓库需要的格式
+- 跑通预处理、训练、推理
+- 用相同 `15` 条测试文本生成对比结果
 
 交付物：
 
-- 一组 VITS 微调后的生成音频。
-- 可以和 CosyVoice 在同一网页中横向对比。
+- 一组真实 `VITS` baseline 样音
+- 页面中可直接横向对比 `CosyVoice` / `VITS`
 
-### 第 4 周：统一评价和结果格式
+### 阶段 D：实验记录与扩展
 
-目标：让实验结果可以重复、可追踪、方便扩展。
+状态：未开始
 
-任务：
+需要补齐：
 
-- 固化结果 JSON 格式。
-- 增加主观评分字段：
-  - 自然度。
-  - 音色相似度。
-  - 发音准确度。
-- 增加基础客观元数据：
-  - 生成耗时。
-  - 音频时长。
-  - 使用的 checkpoint。
-  - 备注。
-- 固定一批测试用例。
+- 实验日志模板
+- 输出目录约定
+- checkpoint 与样音命名规则
+- 后续新增模型接入规则
 
-交付物：
+## 6. 当前推荐执行顺序
 
-- 稳定的本地 benchmark 目录结构。
-- 后续新增模型时，只需要补充音频和 JSON 结果。
+建议严格按这个顺序推进：
+
+1. 统一修正中文编码
+2. 完成 `CosyVoice` 真实推理并接入页面
+3. 补实验日志模板
+4. 启动 `VITS` baseline
+5. 评估是否需要接入更多模型或自动化评测
 
 ## 7. 暂缓内容
 
-VALL-E 类模型先不要放在第一阶段。
+当前不建议优先做：
 
-原因：
+- 后端服务
+- 数据库
+- 多用户系统
+- 长期在线部署
+- 一开始就接入多个新模型
+- 大规模自动化评测平台
 
-- 模型和依赖链通常更复杂。
-- 涉及 codec、tokenizer、语言模型等更多环节。
-- 作为第一个实验对象不利于控制学习成本。
+## 8. 结果数据格式
 
-后续可考虑的方向：
-
-- VALL-E 开源变体。
-- Amphion 相关 recipe。
-- VoiceCraft。
-- F5-TTS / E2-TTS 类方法。
-
-## 8. 标准目录结构
-
-```text
-project0/
-  DATASET_PLAN.md
-  PROJECT_RULES.md
-  PUBLIC_DATASET_OPTIONS.md
-  TTS_BENCHMARK_PLAN.md
-  web/
-    index.html
-    styles.css
-    app.js
-    data/
-      test-cases.json
-      results.json
-    audio/
-      cosyvoice/
-      vits/
-      valle/
-  datasets/
-    raw/
-    processed/
-  server-notes/
-    mobaxterm.md
-    gpu-setup.md
-```
-
-## 9. 结果数据格式
-
-每条生成音频结果建议使用下面的结构描述：
+每条生成音频结果使用如下结构：
 
 ```json
 {
@@ -229,29 +161,13 @@ project0/
 
 字段说明：
 
-- `caseId`：测试用例 ID。
-- `model`：模型名称。
-- `audioPath`：网页中使用的本地音频路径。
-- `speaker`：说话人标识。
-- `checkpoint`：使用的预训练模型或微调 checkpoint。
-- `generationTimeSec`：生成耗时，单位为秒。
-- `naturalness`：自然度评分。
-- `similarity`：音色相似度评分。
-- `pronunciation`：发音准确度评分。
-- `notes`：主观备注或错误记录。
-
-## 10. 成本控制规则
-
-- 第一阶段使用按小时计费的 GPU 租赁平台。
-- 不要一开始就租包月 GPU 服务器。
-- 先跑预训练推理，再做微调。
-- 第一批数据集保持小规模。
-- 每次实验结束后及时关闭 GPU 机器。
-- 删除云端机器前，先下载 checkpoint、日志和生成音频。
-- 本地网页开发不依赖 GPU，尽量在 Windows 本地完成。
-
-## 11. 数据集策略
-
-详细数据准备计划见 `DATASET_PLAN.md`，公开数据集对比见 `PUBLIC_DATASET_OPTIONS.md`。
-
-第一阶段不自己录制，优先使用公开中文单说话人 TTS 数据集。默认优先尝试标贝中文标准女声音库，先抽取 1 到 2 小时做 VITS fine-tuning。CosyVoice 起步仍然先做 pretrained inference。
+- `caseId`：测试用例 ID
+- `model`：模型名称
+- `audioPath`：网页可访问的相对音频路径
+- `speaker`：说话人标识
+- `checkpoint`：使用的模型版本或 checkpoint
+- `generationTimeSec`：生成耗时
+- `naturalness`：自然度评分
+- `similarity`：音色相似度评分
+- `pronunciation`：发音评分
+- `notes`：备注

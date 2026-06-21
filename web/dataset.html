@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AISHELL-3 数据集展示</title>
+    <link rel="stylesheet" href="dataset.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Chinese TTS Dataset</p>
+          <h1 id="datasetName">AISHELL-3</h1>
+          <p id="datasetSummary"></p>
+          <div class="tag-list" id="datasetTags"></div>
+        </div>
+      </section>
+
+      <section class="stats-grid" id="statsGrid"></section>
+
+      <section class="two-col">
+        <article class="panel">
+          <h2>数据格式</h2>
+          <div class="definition-list" id="formatList"></div>
+        </article>
+
+        <article class="panel">
+          <h2>目录结构</h2>
+          <pre class="code-block" id="structureBlock"></pre>
+        </article>
+      </section>
+
+      <section class="two-col">
+        <article class="panel">
+          <h2>字段说明</h2>
+          <div class="definition-list" id="fieldList"></div>
+        </article>
+
+        <article class="panel">
+          <h2>当前抽取子集</h2>
+          <div class="definition-list" id="subsetList"></div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>说话人样例</h2>
+            <p>按当前统计的训练集时长排序，便于快速挑选单说话人实验对象。</p>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="speaker-table">
+            <thead>
+              <tr>
+                <th>Speaker</th>
+                <th>条数</th>
+                <th>时长</th>
+                <th>性别</th>
+                <th>口音</th>
+              </tr>
+            </thead>
+            <tbody id="speakerTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="dataset.js"></script>
+  </body>
+</html>

@@ -1,5 +1,9 @@
 .agents/
 .codex/
+!.codex/
+!.codex/skills/
+!.codex/skills/guizang-ppt-skill/
+!.codex/skills/guizang-ppt-skill/**
 
 # OS and editor files
 .DS_Store
@@ -39,6 +43,9 @@ venv/
 
 # Dataset downloads and large generated artifacts
 datasets/downloads/
+datasets/raw/public/aishell3/
+datasets/raw/speaker_a/wavs/
+!datasets/raw/speaker_a/wavs/.gitkeep
 *.crdownload
 
 # Benchmark generated outputs

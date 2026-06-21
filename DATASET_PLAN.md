@@ -1,189 +1,117 @@
-# 数据集准备计划
+﻿# 数据集准备计划
 
-## 1. 当前磁盘空间判断
+## 1. 当前状态更新
 
-当前项目位于：
+截至 `2026-06-22`，数据准备已经不再停留在模板阶段。
+
+当前已完成：
+
+- 已加入 AISHELL-3 数据准备脚本：`scripts/prepare_aishell3.py`
+- 已生成公开数据清单与说话人汇总
+- 已从 AISHELL-3 抽取单说话人子集 `speaker_a`
+- `datasets/raw/speaker_a/metadata.csv` 已生成
+- `datasets/raw/speaker_a/wavs/` 当前已有 `467` 条 wav
+- `datasets/raw/speaker_a/source_summary.json` 已记录来源和抽取结果
+
+当前 `speaker_a` 摘要：
+
+- 来源：AISHELL-3
+- 选中说话人：`SSB0005`
+- 抽取条数：`467`
+- 时长：约 `0.673` 小时
+- 用途：作为第一轮 `VITS` baseline 的单说话人训练子集
+
+## 2. 当前磁盘与目录策略
+
+项目路径：
 
 ```text
 D:\codex\project0
 ```
 
-本机磁盘情况：
+继续保持以下原则：
+
+- 所有数据、模型缓存、下载包优先放在 `D:` 盘
+- 训练原始数据放在 `datasets/raw/`
+- 预处理结果放在 `datasets/processed/`
+- 展示音频放在 `web/audio/`
+
+推荐目录：
 
 ```text
-C:\  剩余约 8.5GB
-D:\  剩余约 376.8GB
-```
-
-结论：
-
-- `D:` 盘空间足够支撑第一阶段和第二阶段实验。
-- `C:` 盘空间偏紧，不建议把数据集、模型权重、conda 环境、pip 缓存放到 C 盘。
-- 后续所有项目数据优先放在 `D:\codex\project0` 下。
-
-## 2. 现在要不要立刻下载数据集
-
-暂时不建议马上下载大数据集。
-
-当前优先级应该是：
-
-1. 先固定测试文本。
-2. 先跑通网页对比页面的数据格式。
-3. 第 2 周先用 CosyVoice pretrained checkpoint 做 inference。
-4. 第 3 周再准备 VITS 小规模 fine-tuning 数据。
-
-原因：
-
-- CosyVoice 起步可以先做 pretrained inference，不需要立刻下载大规模训练集。
-- VITS 微调第一版只需要 30 分钟到 2 小时的干净单说话人语音。
-- 大数据集会占用下载时间、整理时间和云端上传时间，第一阶段收益不高。
-
-## 3. 第一阶段建议数据量
-
-### 最小可行数据量
-
-用于 VITS 小规模微调：
-
-```text
-30 分钟到 1 小时
-```
-
-适合目标：
-
-- 跑通数据处理流程。
-- 跑通训练脚本。
-- 得到可展示的 baseline 结果。
-
-### 更稳妥的数据量
-
-用于初步提升音色稳定性：
-
-```text
-1 小时到 2 小时
-```
-
-适合目标：
-
-- 单说话人微调。
-- 和 CosyVoice pretrained inference 做初步对比。
-- 观察发音、韵律、音色相似度。
-
-### 暂不建议的数据量
-
-第一阶段暂不建议下载：
-
-```text
-10 小时以上的大数据集
-```
-
-原因：
-
-- 数据清洗成本明显增加。
-- 上传云端耗时更长。
-- GPU 训练成本更高。
-- 还没有必要为了第一版网页展示引入这么大规模的数据。
-
-## 4. 音频空间估算
-
-未压缩 wav 的大致体积：
-
-```text
-24kHz / 16-bit / mono 约 173MB / 小时
-44.1kHz / 16-bit / mono 约 318MB / 小时
-48kHz / 16-bit / mono 约 346MB / 小时
-```
-
-考虑到还会产生 processed 数据、切片、日志、checkpoint、生成音频，建议按下面的倍数预留：
-
-```text
-原始音频体积 x 3 到 x 5
-```
-
-示例：
-
-```text
-2 小时 24kHz wav 原始音频约 350MB
-实际项目预留 2GB 到 3GB 比较舒服
-```
-
-所以以当前 `D:` 盘剩余约 376GB 来看，第一阶段完全够用。
-
-## 5. 推荐目录
-
-原始数据：
-
-```text
+datasets/downloads/
+datasets/raw/public/aishell3/
 datasets/raw/speaker_a/
-```
-
-处理后的数据：
-
-```text
 datasets/processed/speaker_a/
-```
-
-本地网页展示音频：
-
-```text
 web/audio/cosyvoice/
 web/audio/vits/
 ```
 
-云端下载回来的结果优先放在 `web/audio/`，训练原始数据和中间数据优先放在 `datasets/`。
+## 3. 现在是否还需要继续下载大数据集
 
-## 6. 数据来源建议
+当前不建议再立即扩充新的大数据集。
 
-第一阶段优先级：
+原因：
 
-1. 使用公开中文单说话人 TTS 数据集。
-2. 从公开数据集中抽取 1 到 2 小时作为第一轮实验数据。
-3. 暂缓下载大型多说话人数据集。
+- 第一轮 `VITS` baseline 已经有可用子集
+- 当前真正的瓶颈不在“缺数据”，而在“缺实验闭环”
+- 真实 `CosyVoice` / `VITS` 结果尚未回填到页面
+- 在没有结果闭环之前继续扩数据集，收益不高
 
-当前不采用自己录制的方案。
+## 4. 当前数据量判断
 
-优先候选：
+以第一轮 baseline 来看，当前 `0.673` 小时的单说话人数据：
 
-```text
-标贝中文标准女声音库（DataBaker / Biaobei）
-```
+- 足够用于跑通 VITS 训练链路
+- 足够用于验证元数据格式和目录组织
+- 足够产出第一轮可试听对比结果
 
-详细公开数据集对比见 `PUBLIC_DATASET_OPTIONS.md`。
+但也要明确：
 
-如果使用公开数据集，建议：
+- 这还不算稳定高质量训练规模
+- 如果后续想明显提升音色稳定性和发音表现，建议扩到 `1` 到 `2` 小时
 
-- 优先选择单说话人。
-- 优先选择 TTS 专用数据集，而不是 ASR 数据集。
-- 每条音频 3 到 12 秒较合适。
-- 文本和音频必须一一对应。
-- 注意许可证，尤其区分非商用和可商用。
+## 5. 数据来源优先级更新
 
-## 7. 下一步任务
+当前优先级已从“理论候选”转为“实际已落地 + 后续再扩充”：
 
-下一步不急着下载大数据集。
+1. 现有 AISHELL-3 `speaker_a` 子集，先完成 baseline
+2. 如效果不足，再评估补充更多 AISHELL-3 单说话人时长
+3. 再考虑是否引入 Biaobei / DataBaker 作为第二条数据路线
 
-已完成：
+这意味着现在不应同时开启多条数据路线。
 
-- 固定 10 到 20 条网页展示用测试文本。
-- 在 `web/data/results.json` 中补齐 CosyVoice 和 VITS 的占位结果。
-- 准备一个 `datasets/raw/speaker_a/metadata.csv` 模板。
+## 6. 当前数据格式
 
-当前状态：
+`datasets/raw/speaker_a/metadata.csv` 当前字段：
 
 ```text
-固定测试文本：15 条
-占位结果：CosyVoice 15 条，VITS 15 条
-metadata 模板：datasets/raw/speaker_a/metadata.csv
-原始音频目录：datasets/raw/speaker_a/wavs/
+utt_id,wav_path,text,speaker_id,language
 ```
 
-继续保持：
+说明：
 
-- 确认后续所有下载、缓存、模型权重都放到 `D:` 盘。
+- `wav_path` 当前使用相对路径，便于迁移
+- `speaker_id` 当前统一写为 `speaker_a`
+- `language` 当前为 `zh`
 
-下一步建议：
+这份元数据适合作为项目内部统一中间格式，后续再按具体训练仓库转换。
 
-- 下载或获取标贝中文标准女声音库。
-- 先抽取 `1 到 2 小时` 的单说话人音频。
-- 每条音频尽量控制在 `3 到 12 秒`。
-- 把抽取后的 wav 文件放到 `datasets/raw/speaker_a/wavs/`。
-- 在 `metadata.csv` 里填写每个 wav 对应的文本。
+## 7. 当前缺口
+
+数据层还缺这些内容：
+
+- `datasets/processed/speaker_a/` 还没有真正生成
+- 还没有针对目标 VITS 仓库的格式转换脚本
+- 还没有音频质量筛查记录
+- 还没有训练 / 验证切分约定
+
+## 8. 下一步建议
+
+建议按下面顺序继续：
+
+1. 先别继续找新数据集
+2. 先用当前 `speaker_a` 跑通一个 `VITS` baseline
+3. 在实验记录里写清楚实际使用了哪些条目、是否做过清洗、训练集如何切分
+4. 如果 baseline 明显受限，再考虑扩到 `1` 到 `2` 小时
+5. 只有在 AISHELL-3 路线不合适时，再切到 Biaobei / DataBaker
