@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TTS 方法效果对比</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">TTS</span>
+          <div>
+            <h1>方法效果对比</h1>
+            <p>VITS / CosyVoice / VALL-E</p>
+          </div>
+        </div>
+
+        <label class="field">
+          <span>测试用例</span>
+          <select id="caseSelect"></select>
+        </label>
+
+        <label class="field">
+          <span>筛选模型</span>
+          <select id="modelFilter">
+            <option value="all">全部模型</option>
+          </select>
+        </label>
+
+        <div class="case-card">
+          <span class="eyebrow">当前文本</span>
+          <p id="caseText"></p>
+          <div class="case-meta">
+            <span id="caseLanguage"></span>
+            <span id="caseCategory"></span>
+          </div>
+        </div>
+
+        <button id="exportButton" class="primary-button" type="button">导出评分 JSON</button>
+      </aside>
+
+      <main class="main">
+        <section class="toolbar">
+          <div>
+            <h2>音频对比工作台</h2>
+            <p>每一行是一种模型的结果。第一周先支持本地展示、试听、打分和记录备注。</p>
+          </div>
+          <label class="file-loader">
+            <input id="jsonInput" type="file" accept="application/json">
+            <span>导入结果 JSON</span>
+          </label>
+        </section>
+
+        <section id="resultGrid" class="result-grid"></section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

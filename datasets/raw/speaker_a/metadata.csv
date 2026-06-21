@@ -1,0 +1,4 @@
+utt_id,wav_path,text,speaker_id,language
+000001,wavs/000001.wav,这里填写第一条音频对应的文本。,speaker_a,zh
+000002,wavs/000002.wav,这里填写第二条音频对应的文本。,speaker_a,zh
+000003,wavs/000003.wav,This is an optional English sample.,speaker_a,en

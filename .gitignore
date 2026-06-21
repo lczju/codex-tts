@@ -1,0 +1,45 @@
+.agents/
+.codex/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+*.tmp
+*.temp
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependency and build outputs
+node_modules/
+dist/
+build/
+coverage/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+
+# Dataset downloads and large generated artifacts
+datasets/downloads/
+*.crdownload
+
+# Benchmark generated outputs
+web/audio/
