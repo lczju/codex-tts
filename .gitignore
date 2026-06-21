@@ -1,9 +1,8 @@
 .agents/
 .codex/
-!.codex/
-!.codex/skills/
-!.codex/skills/guizang-ppt-skill/
-!.codex/skills/guizang-ppt-skill/**
+AGENTS.md
+docs/superpowers/
+server-notes/guizang-ppt-skill.md
 
 # OS and editor files
 .DS_Store
@@ -40,6 +39,7 @@ __pycache__/
 .pytest_cache/
 .venv/
 venv/
+.test-generate-sample-spectrograms-*/
 
 # Dataset downloads and large generated artifacts
 datasets/downloads/
