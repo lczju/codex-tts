@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import atexit
 import csv
 import gc
 import importlib.util
@@ -10,6 +9,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import tempfile
 import uuid
 import wave
 from pathlib import Path
@@ -17,7 +17,6 @@ from pathlib import Path
 sys.dont_write_bytecode = True
 
 TESTS_DIR = Path("tests")
-TEMP_ROOT = TESTS_DIR / ".tmp"
 
 
 def load_module():
@@ -52,48 +51,56 @@ def write_test_wav(path: Path, frames: int = 1600, channels: int = 1, sample_wid
         handle.writeframes(bytes([64]) * frames * channels * sample_width)
 
 
-def cleanup_test_workspace(tmp_path: Path, temp_root: Path) -> None:
+def make_test_workspace() -> Path:
+    return Path(tempfile.mkdtemp(prefix=f"task1-{uuid.uuid4().hex}-"))
+
+
+def cleanup_path(path: Path) -> None:
     gc.collect()
-    shutil.rmtree(tmp_path, ignore_errors=True)
+    shutil.rmtree(path, ignore_errors=True)
+    if path.exists():
+        subprocess.run(
+            [
+                "powershell",
+                "-NoProfile",
+                "-Command",
+                f"Remove-Item -LiteralPath '{path.resolve()}' -Recurse -Force -ErrorAction SilentlyContinue",
+            ],
+            check=False,
+        )
+
+
+def cleanup_test_workspace(workspace: Path) -> None:
+    cleanup_path(workspace)
     pycache_path = TESTS_DIR / "__pycache__"
     if pycache_path.exists():
-        shutil.rmtree(pycache_path, ignore_errors=True)
-    if temp_root.exists() and not any(temp_root.iterdir()):
-        temp_root.rmdir()
+        cleanup_path(pycache_path)
 
 
-def cleanup_test_artifacts() -> None:
-    gc.collect()
-    cleanup_script = (
-        f"Start-Sleep -Milliseconds 200; "
-        f"Remove-Item -LiteralPath '{TEMP_ROOT.resolve()}' -Recurse -Force -ErrorAction SilentlyContinue; "
-        f"Remove-Item -LiteralPath '{(TESTS_DIR / '__pycache__').resolve()}' -Recurse -Force -ErrorAction SilentlyContinue"
-    )
-    subprocess.Popen(
-        [
-            "powershell",
-            "-NoProfile",
-            "-WindowStyle",
-            "Hidden",
-            "-Command",
-            cleanup_script,
-        ]
-    )
-
-
-atexit.register(cleanup_test_artifacts)
-
-
-def test_generate_assets_preserves_relative_wav_paths_and_derives_dataset_speaker():
-    module = load_module()
-    temp_root = TEMP_ROOT
-    temp_root.mkdir(parents=True, exist_ok=True)
-    tmp_path = temp_root / uuid.uuid4().hex
-    tmp_path.mkdir(parents=True, exist_ok=False)
+def test_make_test_workspace_creates_temp_dir_outside_repo_worktree():
+    workspace = make_test_workspace()
 
     try:
-        metadata_path = tmp_path / "metadata.csv"
-        wavs_dir = tmp_path / "wavs"
+        assert workspace.exists()
+        assert workspace.is_dir()
+
+        try:
+            workspace.resolve().relative_to(TESTS_DIR.resolve())
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Expected temp workspace outside tests directory")
+    finally:
+        cleanup_test_workspace(workspace)
+
+
+def test_generate_assets_preserves_relative_paths_and_derives_web_paths():
+    module = load_module()
+    workspace = make_test_workspace()
+
+    try:
+        metadata_path = workspace / "metadata.csv"
+        wavs_dir = workspace / "source" / "clips"
         with metadata_path.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(
                 handle,
@@ -105,7 +112,7 @@ def test_generate_assets_preserves_relative_wav_paths_and_derives_dataset_speake
                     "utt_id": "demo_001",
                     "wav_path": "nested/demo_001.wav",
                     "text": "第一条测试样本",
-                    "speaker_id": "speaker_b",
+                    "speaker_id": "speaker_a",
                     "language": "zh",
                 }
             )
@@ -123,9 +130,9 @@ def test_generate_assets_preserves_relative_wav_paths_and_derives_dataset_speake
         write_test_wav(wavs_dir / "nested" / "demo_001.wav")
         write_test_wav(wavs_dir / "other" / "demo_002.wav")
 
-        output_audio_dir = tmp_path / "web" / "audio" / "raw"
-        output_spectrogram_dir = tmp_path / "web" / "assets" / "spectrograms"
-        output_json_path = tmp_path / "web" / "data" / "raw-samples.json"
+        output_audio_dir = workspace / "web" / "media" / "raw-audio"
+        output_spectrogram_dir = workspace / "web" / "images" / "spectrograms"
+        output_json_path = workspace / "web" / "data" / "generated" / "raw-samples.json"
 
         module.generate_assets(
             metadata_path=metadata_path,
@@ -146,35 +153,90 @@ def test_generate_assets_preserves_relative_wav_paths_and_derives_dataset_speake
         assert output_json_path.exists()
 
         payload = json.loads(output_json_path.read_text(encoding="utf-8"))
-        assert payload["dataset"]["name"] == "AISHELL-3 speaker_a subset"
-        assert payload["dataset"]["speakerId"] == "speaker_b"
-        assert payload["dataset"]["sourceSpeakerId"] == "SSB0005"
-        assert payload["dataset"]["sampleCount"] == 1
+        assert payload["dataset"] == {
+            "name": "AISHELL-3 speaker_a subset",
+            "speakerId": "speaker_a",
+            "sourceSpeakerId": "SSB0005",
+            "sampleCount": 1,
+        }
         assert payload["samples"] == [
             {
                 "uttId": "demo_001",
                 "text": "第一条测试样本",
-                "audioPath": "./audio/raw/nested/demo_001.wav",
-                "spectrogramPath": "./assets/spectrograms/nested/demo_001.png",
-                "speakerId": "speaker_b",
+                "audioPath": "./media/raw-audio/nested/demo_001.wav",
+                "spectrogramPath": "./images/spectrograms/nested/demo_001.png",
+                "speakerId": "speaker_a",
                 "language": "zh",
                 "durationSec": 0.1,
             }
         ]
     finally:
-        cleanup_test_workspace(tmp_path, temp_root)
+        cleanup_test_workspace(workspace)
+
+
+def test_generate_assets_rejects_mixed_speaker_metadata():
+    module = load_module()
+    workspace = make_test_workspace()
+
+    try:
+        metadata_path = workspace / "metadata.csv"
+        wavs_dir = workspace / "source" / "clips"
+        with metadata_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(
+                handle,
+                fieldnames=["utt_id", "wav_path", "text", "speaker_id", "language"],
+            )
+            writer.writeheader()
+            writer.writerow(
+                {
+                    "utt_id": "demo_001",
+                    "wav_path": "nested/demo_001.wav",
+                    "text": "sample one",
+                    "speaker_id": "speaker_a",
+                    "language": "zh",
+                }
+            )
+            writer.writerow(
+                {
+                    "utt_id": "demo_002",
+                    "wav_path": "nested/demo_002.wav",
+                    "text": "sample two",
+                    "speaker_id": "speaker_b",
+                    "language": "zh",
+                }
+            )
+
+        write_test_wav(wavs_dir / "nested" / "demo_001.wav")
+        write_test_wav(wavs_dir / "nested" / "demo_002.wav")
+
+        try:
+            module.generate_assets(
+                metadata_path=metadata_path,
+                dataset_name="AISHELL-3 speaker_a subset",
+                source_speaker_id="SSB0005",
+                source_wavs_dir=wavs_dir,
+                output_audio_dir=workspace / "web" / "media" / "raw-audio",
+                output_spectrogram_dir=workspace / "web" / "images" / "spectrograms",
+                output_json_path=workspace / "web" / "data" / "generated" / "raw-samples.json",
+                sample_limit=2,
+            )
+        except ValueError as error:
+            message = str(error)
+            assert "speaker_id" in message
+            assert "single-speaker" in message
+        else:
+            raise AssertionError("Expected ValueError for mixed-speaker metadata")
+    finally:
+        cleanup_test_workspace(workspace)
 
 
 def test_generate_assets_rejects_wav_paths_outside_source_root():
     module = load_module()
-    temp_root = TEMP_ROOT
-    temp_root.mkdir(parents=True, exist_ok=True)
-    tmp_path = temp_root / uuid.uuid4().hex
-    tmp_path.mkdir(parents=True, exist_ok=False)
+    workspace = make_test_workspace()
 
     try:
-        metadata_path = tmp_path / "metadata.csv"
-        wavs_dir = tmp_path / "wavs"
+        metadata_path = workspace / "metadata.csv"
+        wavs_dir = workspace / "wavs"
         with metadata_path.open("w", encoding="utf-8", newline="") as handle:
             writer = csv.DictWriter(
                 handle,
@@ -191,7 +253,7 @@ def test_generate_assets_rejects_wav_paths_outside_source_root():
                 }
             )
 
-        write_test_wav(tmp_path / "escape.wav")
+        write_test_wav(workspace / "escape.wav")
 
         try:
             module.generate_assets(
@@ -199,9 +261,9 @@ def test_generate_assets_rejects_wav_paths_outside_source_root():
                 dataset_name="AISHELL-3 speaker_a subset",
                 source_speaker_id="SSB0005",
                 source_wavs_dir=wavs_dir,
-                output_audio_dir=tmp_path / "web" / "audio" / "raw",
-                output_spectrogram_dir=tmp_path / "web" / "assets" / "spectrograms",
-                output_json_path=tmp_path / "web" / "data" / "raw-samples.json",
+                output_audio_dir=workspace / "web" / "audio" / "raw",
+                output_spectrogram_dir=workspace / "web" / "assets" / "spectrograms",
+                output_json_path=workspace / "web" / "data" / "raw-samples.json",
                 sample_limit=1,
             )
         except ValueError as error:
@@ -209,19 +271,16 @@ def test_generate_assets_rejects_wav_paths_outside_source_root():
         else:
             raise AssertionError("Expected ValueError for invalid wav_path")
     finally:
-        cleanup_test_workspace(tmp_path, temp_root)
+        cleanup_test_workspace(workspace)
 
 
 def test_generate_spectrogram_png_rejects_unsupported_wav_shape():
     module = load_module()
-    temp_root = TEMP_ROOT
-    temp_root.mkdir(parents=True, exist_ok=True)
-    tmp_path = temp_root / uuid.uuid4().hex
-    tmp_path.mkdir(parents=True, exist_ok=False)
+    workspace = make_test_workspace()
 
     try:
-        wav_path = tmp_path / "stereo.wav"
-        output_path = tmp_path / "spectrogram.png"
+        wav_path = workspace / "stereo.wav"
+        output_path = workspace / "spectrogram.png"
         write_test_wav(wav_path, channels=2)
 
         try:
@@ -231,4 +290,20 @@ def test_generate_spectrogram_png_rejects_unsupported_wav_shape():
         else:
             raise AssertionError("Expected ValueError for unsupported WAV shape")
     finally:
-        cleanup_test_workspace(tmp_path, temp_root)
+        cleanup_test_workspace(workspace)
+
+
+def test_generate_spectrogram_png_handles_short_clips():
+    module = load_module()
+    workspace = make_test_workspace()
+
+    try:
+        wav_path = workspace / "short.wav"
+        output_path = workspace / "spectrogram.png"
+        write_test_wav(wav_path, frames=32)
+
+        module.generate_spectrogram_png(wav_path, output_path)
+
+        assert output_path.exists()
+    finally:
+        cleanup_test_workspace(workspace)
