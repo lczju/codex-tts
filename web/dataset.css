@@ -34,6 +34,33 @@ body {
   gap: 18px;
 }
 
+.back-link {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 253, 249, 0.78);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
+.back-link::before {
+  content: "<";
+  color: var(--accent);
+}
+
+.back-link:hover,
+.back-link:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
 .hero,
 .panel,
 .stat-card {

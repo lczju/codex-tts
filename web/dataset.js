@@ -1,56 +1,57 @@
 const datasetOverview = {
-  name: "AISHELL-3",
-  summary: "AISHELL-3 是一个大规模中文多说话人 TTS 数据集，适合做多说话人语音合成，也适合先抽取单个说话人做第一版 baseline。",
-  tags: ["中文", "多说话人", "TTS", "44.1kHz", "16-bit", "PCM WAV"],
+  name: "AISHELL-3 / speaker_a",
+  summary: "这个页面说明当前中文 baseline 使用的数据来源：原始库是 AISHELL-3，多说话人语料中已抽取 SSB0005，并在仓库内整理为单说话人子集 speaker_a，供首页原始样本检查和后续 VITS baseline 复用。",
+  tags: ["中文", "单说话人子集", "AISHELL-3", "speaker_a", "44.1kHz", "PCM WAV"],
   stats: [
-    { label: "压缩包大小", value: "17.75 GB", note: "本地文件 data_aishell3.tgz" },
-    { label: "总语句数", value: "88,035", note: "train + test" },
-    { label: "训练语句", value: "63,262", note: "train/wav" },
-    { label: "测试语句", value: "24,773", note: "test/wav" },
-    { label: "训练说话人", value: "174", note: "当前包内实际统计" },
-    { label: "平均单句时长", value: "3.50 s", note: "中位数 3.21 s" }
+    { label: "来源数据集", value: "AISHELL-3", note: "当前中文主线 baseline 的公开来源" },
+    { label: "抽取说话人", value: "SSB0005", note: "已在本地整理为 speaker_a" },
+    { label: "已落盘条数", value: "467", note: "datasets/raw/speaker_a/wavs/" },
+    { label: "总时长", value: "0.673 h", note: "约 40.4 分钟，可先跑通 baseline" },
+    { label: "metadata 字段", value: "5", note: "utt_id, wav_path, text, speaker_id, language" },
+    { label: "当前用途", value: "Raw + VITS", note: "首页试听检查 + 后续训练输入" }
   ],
   formats: [
-    { term: "音频格式", detail: "单声道 PCM WAV，44.1kHz，16-bit。" },
-    { term: "文本标注", detail: "content.txt 每行记录文件名和文本，同时包含逐字拼音。" },
-    { term: "说话人元信息", detail: "spk-info.txt 提供年龄段、性别、口音方向等信息。" },
-    { term: "数据切分", detail: "原始数据自带 train 和 test 两部分。" }
+    { term: "音频格式", detail: "抽取后的子集继续保留 AISHELL-3 的 PCM WAV 形式，当前页面按仓库里实际落盘的 wav 文件理解。"},
+    { term: "文本标注", detail: "训练文本来自 AISHELL-3 的内容清单，已整理进 metadata.csv，便于后续脚本直接消费。"},
+    { term: "说话人映射", detail: "源说话人 ID 是 SSB0005；为了项目内统一管理，metadata.csv 中的 speaker_id 当前统一写作 speaker_a。"},
+    { term: "当前切分", detail: "本地子集只保留当前实验需要的训练音频，不在这个页面展开原始库全部 train/test 结构。"}
   ],
   structure: [
-    "data_aishell3.tgz",
-    "├─ ReadMe.txt",
-    "├─ phone_set.txt",
-    "├─ spk-info.txt",
-    "├─ train/",
-    "│  ├─ content.txt",
-    "│  └─ wav/<speaker_id>/*.wav",
-    "└─ test/",
-    "   ├─ content.txt",
-    "   └─ wav/<speaker_id>/*.wav"
+    "datasets/",
+    "├─ raw/",
+    "│  ├─ public/aishell3/",
+    "│  │  ├─ manifest.csv",
+    "│  │  └─ speaker_summary.csv",
+    "│  └─ speaker_a/",
+    "│     ├─ metadata.csv",
+    "│     ├─ source_summary.json",
+    "│     └─ wavs/*.wav",
+    "└─ processed/",
+    "   └─ speaker_a/  (待生成)"
   ].join("\n"),
   fields: [
-    { term: "utt_id", detail: "语句 ID，例如 SSB00050001。" },
-    { term: "speaker_id", detail: "说话人 ID，例如 SSB0005。" },
-    { term: "text", detail: "从 content.txt 抽出的中文文本，可直接进入训练 metadata。" },
-    { term: "pinyin", detail: "逐字拼音信息，适合后续做分析或额外处理。" },
-    { term: "duration_sec", detail: "根据 wav 文件大小估算的单句时长。" }
+    { term: "utt_id", detail: "语句 ID，保留原始说话人前缀，例如 SSB00050001。"},
+    { term: "wav_path", detail: "相对音频路径，当前写法如 wavs/SSB00050001.wav，方便后续迁移到训练目录。"},
+    { term: "text", detail: "中文训练文本，已经从源数据中整理出来，可直接进入训练前的数据转换步骤。"},
+    { term: "speaker_id", detail: "项目内统一说话人名，当前固定为 speaker_a，用来屏蔽源数据的多说话人复杂度。"},
+    { term: "language", detail: "语言字段，当前子集统一为 zh，便于后续接更多语言时保持格式一致。"}
   ],
   subset: [
-    { term: "当前抽取说话人", detail: "SSB0005" },
-    { term: "子集规模", detail: "467 条训练音频" },
-    { term: "总时长", detail: "约 0.673 小时" },
-    { term: "属性", detail: "B 组，female，north" },
-    { term: "本地落盘", detail: "datasets/raw/speaker_a/metadata.csv 和 datasets/raw/speaker_a/wavs/" }
+    { term: "当前抽取说话人", detail: "SSB0005，来自 AISHELL-3 公开说话人集合。"},
+    { term: "仓库内名称", detail: "speaker_a，用于首页展示、元数据管理和后续训练转换。"},
+    { term: "子集规模", detail: "467 条训练音频，已写入 metadata.csv 并同步抽取 wav 文件。"},
+    { term: "人物属性", detail: "B 组、女声、北方口音，信息来自 source_summary.json。"},
+    { term: "本地路径", detail: "datasets/raw/speaker_a/metadata.csv、datasets/raw/speaker_a/source_summary.json、datasets/raw/speaker_a/wavs/。"}
   ],
   speakers: [
-    { speakerId: "SSB0005", utteranceCount: 467, durationHours: 0.673, gender: "female", accent: "north" },
-    { speakerId: "SSB0609", utteranceCount: 451, durationHours: 0.61, gender: "male", accent: "north" },
-    { speakerId: "SSB0149", utteranceCount: 436, durationHours: 0.594, gender: "female", accent: "south" },
-    { speakerId: "SSB0415", utteranceCount: 450, durationHours: 0.587, gender: "female", accent: "north" },
-    { speakerId: "SSB0631", utteranceCount: 440, durationHours: 0.575, gender: "male", accent: "south" },
-    { speakerId: "SSB0786", utteranceCount: 462, durationHours: 0.557, gender: "female", accent: "north" },
-    { speakerId: "SSB0629", utteranceCount: 441, durationHours: 0.552, gender: "male", accent: "north" },
-    { speakerId: "SSB0273", utteranceCount: 460, durationHours: 0.55, gender: "male", accent: "north" }
+    { speakerId: "SSB0005", utteranceCount: 467, durationHours: 0.673, gender: "女", accent: "北方" },
+    { speakerId: "SSB0609", utteranceCount: 451, durationHours: 0.61, gender: "男", accent: "北方" },
+    { speakerId: "SSB0149", utteranceCount: 436, durationHours: 0.594, gender: "女", accent: "南方" },
+    { speakerId: "SSB0415", utteranceCount: 450, durationHours: 0.587, gender: "女", accent: "北方" },
+    { speakerId: "SSB0631", utteranceCount: 440, durationHours: 0.575, gender: "男", accent: "南方" },
+    { speakerId: "SSB0786", utteranceCount: 462, durationHours: 0.557, gender: "女", accent: "北方" },
+    { speakerId: "SSB0629", utteranceCount: 441, durationHours: 0.552, gender: "男", accent: "北方" },
+    { speakerId: "SSB0273", utteranceCount: 460, durationHours: 0.55, gender: "男", accent: "北方" }
   ]
 };
 

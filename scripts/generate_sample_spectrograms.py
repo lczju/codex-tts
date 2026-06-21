@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 import os
@@ -14,6 +15,54 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.signal import spectrogram
+
+
+def build_default_paths(project_root: Path) -> dict[str, Path]:
+    return {
+        "metadata_path": project_root / "datasets" / "raw" / "speaker_a" / "metadata.csv",
+        "source_wavs_dir": project_root / "datasets" / "raw" / "speaker_a" / "wavs",
+        "output_audio_dir": project_root / "web" / "audio" / "raw",
+        "output_spectrogram_dir": project_root / "web" / "assets" / "spectrograms",
+        "output_json_path": project_root / "web" / "data" / "raw-samples.json",
+    }
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    project_root = Path.cwd()
+    default_paths = build_default_paths(project_root)
+
+    parser = argparse.ArgumentParser(
+        description="Generate raw sample previews and spectrograms for the web workbench."
+    )
+    parser.add_argument("--project-root", type=Path, default=project_root)
+    parser.add_argument("--metadata-path", type=Path, default=default_paths["metadata_path"])
+    parser.add_argument("--source-wavs-dir", type=Path, default=default_paths["source_wavs_dir"])
+    parser.add_argument("--output-audio-dir", type=Path, default=default_paths["output_audio_dir"])
+    parser.add_argument(
+        "--output-spectrogram-dir",
+        type=Path,
+        default=default_paths["output_spectrogram_dir"],
+    )
+    parser.add_argument("--output-json-path", type=Path, default=default_paths["output_json_path"])
+    parser.add_argument("--sample-limit", type=int, default=10)
+    parser.add_argument("--dataset-name", default="AISHELL-3 speaker_a subset")
+    parser.add_argument("--source-speaker-id", default="SSB0005")
+    args = parser.parse_args(argv)
+
+    resolved_project_root = args.project_root.resolve()
+    default_paths = build_default_paths(resolved_project_root)
+    if args.metadata_path == project_root / "datasets" / "raw" / "speaker_a" / "metadata.csv":
+        args.metadata_path = default_paths["metadata_path"]
+    if args.source_wavs_dir == project_root / "datasets" / "raw" / "speaker_a" / "wavs":
+        args.source_wavs_dir = default_paths["source_wavs_dir"]
+    if args.output_audio_dir == project_root / "web" / "audio" / "raw":
+        args.output_audio_dir = default_paths["output_audio_dir"]
+    if args.output_spectrogram_dir == project_root / "web" / "assets" / "spectrograms":
+        args.output_spectrogram_dir = default_paths["output_spectrogram_dir"]
+    if args.output_json_path == project_root / "web" / "data" / "raw-samples.json":
+        args.output_json_path = default_paths["output_json_path"]
+    args.project_root = resolved_project_root
+    return args
 
 
 def _infer_web_root(
@@ -56,6 +105,13 @@ def _resolve_wav_path(root: Path, wav_path_value: str) -> tuple[Path, Path]:
         raise ValueError(f"Invalid wav_path outside root: {wav_path_value}") from error
 
     return relative_wav_path, resolved_path
+
+
+def _normalize_dataset_wav_path(source_wavs_dir: Path, wav_path_value: str) -> Path:
+    relative_wav_path = Path(wav_path_value)
+    if relative_wav_path.parts and relative_wav_path.parts[0] == source_wavs_dir.name:
+        return Path(*relative_wav_path.parts[1:])
+    return relative_wav_path
 
 
 def _read_wav_samples(wav_path: Path) -> tuple[int, np.ndarray]:
@@ -142,8 +198,12 @@ def generate_assets(
     samples = []
     for row in selected_rows:
         utt_id = row["utt_id"]
-        relative_wav_path, source_wav_path = _resolve_wav_path(source_wavs_dir, row["wav_path"])
-        _, copied_wav_path = _resolve_wav_path(output_audio_dir, row["wav_path"])
+        normalized_wav_path = _normalize_dataset_wav_path(source_wavs_dir, row["wav_path"])
+        relative_wav_path, source_wav_path = _resolve_wav_path(
+            source_wavs_dir,
+            str(normalized_wav_path),
+        )
+        _, copied_wav_path = _resolve_wav_path(output_audio_dir, str(normalized_wav_path))
         _, spectrogram_path = _resolve_wav_path(
             output_spectrogram_dir,
             str(relative_wav_path.with_suffix(".png")),
@@ -179,3 +239,22 @@ def generate_assets(
         json.dumps(payload, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    generate_assets(
+        metadata_path=args.metadata_path,
+        dataset_name=args.dataset_name,
+        source_speaker_id=args.source_speaker_id,
+        source_wavs_dir=args.source_wavs_dir,
+        output_audio_dir=args.output_audio_dir,
+        output_spectrogram_dir=args.output_spectrogram_dir,
+        output_json_path=args.output_json_path,
+        sample_limit=args.sample_limit,
+    )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

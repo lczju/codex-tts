@@ -1,320 +1,284 @@
-const defaultData = {
-  testCases: [
-    {
-      id: "case_001",
-      text: "今天我们来比较几种语音合成模型的效果。",
-      language: "zh",
-      category: "基础发音"
-    },
-    {
-      id: "case_002",
-      text: "请在明天下午三点半，把实验报告发送到邮箱里。",
-      language: "zh",
-      category: "数字与时间"
-    },
-    {
-      id: "case_003",
-      text: "This is a short English sentence for cross-language speech synthesis.",
-      language: "en",
-      category: "英文"
-    },
-    {
-      id: "case_004",
-      text: "如果模型在长句中还能保持稳定的停顿、重音和语气，听感通常会更自然。",
-      language: "zh",
-      category: "长句稳定性"
-    },
-    {
-      id: "case_005",
-      text: "2026年6月22日，实验编号是TTS-015，采样率设置为24000赫兹。",
-      language: "zh",
-      category: "日期与编号"
-    },
-    {
-      id: "case_006",
-      text: "请把GPU服务器上的结果下载到D盘，不要放到C盘。",
-      language: "zh",
-      category: "中英混合"
-    },
-    {
-      id: "case_007",
-      text: "OpenAI, PyTorch, CUDA, and MobaXterm are mentioned in this experiment.",
-      language: "en",
-      category: "英文专名"
-    },
-    {
-      id: "case_008",
-      text: "这个声音听起来像同一个人吗？请重点关注音色相似度。",
-      language: "zh",
-      category: "疑问句"
-    },
-    {
-      id: "case_009",
-      text: "太好了！这次合成的语音终于没有明显的机械感了。",
-      language: "zh",
-      category: "情绪表达"
-    },
-    {
-      id: "case_010",
-      text: "我想比较VITS、CosyVoice和VALL-E在同一段文本上的表现。",
-      language: "zh",
-      category: "模型名称"
-    },
-    {
-      id: "case_011",
-      text: "北京、上海、广州和深圳的天气数据会在晚上八点更新。",
-      language: "zh",
-      category: "地名"
-    },
-    {
-      id: "case_012",
-      text: "这句话包含一些轻声、儿化音和连续变调，需要仔细听发音是否自然。",
-      language: "zh",
-      category: "中文韵律"
-    },
-    {
-      id: "case_013",
-      text: "The quick brown fox jumps over the lazy dog near the river bank.",
-      language: "en",
-      category: "英文韵律"
-    },
-    {
-      id: "case_014",
-      text: "请用平静、清晰、稳定的语气读完这句话，不要突然加速。",
-      language: "zh",
-      category: "语速控制"
-    },
-    {
-      id: "case_015",
-      text: "当训练数据只有三十分钟时，模型可能会出现音色漂移或发音不稳。",
-      language: "zh",
-      category: "实验说明"
-    }
-  ],
-  results: []
-};
-
-defaultData.results = defaultData.testCases.flatMap((testCase) => [
+﻿const modelDefinitions = [
   {
-    caseId: testCase.id,
-    model: "CosyVoice",
-    audioPath: "",
-    speaker: "speaker_a",
-    checkpoint: "pretrained",
-    generationTimeSec: null,
-    naturalness: null,
-    similarity: null,
-    pronunciation: null,
-    notes: "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+    name: "CosyVoice",
+    stage: "待接入",
+    description: "模型结果区保留为空状态。接入真实生成音频后，再补充试听与对比入口。"
   },
   {
-    caseId: testCase.id,
-    model: "VITS",
-    audioPath: "",
-    speaker: "speaker_a",
-    checkpoint: "fine-tuned",
-    generationTimeSec: null,
-    naturalness: null,
-    similarity: null,
-    pronunciation: null,
-    notes: "第三周完成小数据微调后加入结果。"
+    name: "VITS",
+    stage: "待接入",
+    description: "当前首页不展示伪结果。等 VITS 样本准备好后，再回到这里接入模型面板。"
   }
-]);
+];
 
-let state = structuredClone(defaultData);
+const initialState = {
+  dataset: null,
+  samples: [],
+  selectedSampleId: null,
+  loadMessage: ""
+};
 
-const caseSelect = document.querySelector("#caseSelect");
-const modelFilter = document.querySelector("#modelFilter");
-const caseText = document.querySelector("#caseText");
-const caseLanguage = document.querySelector("#caseLanguage");
-const caseCategory = document.querySelector("#caseCategory");
-const resultGrid = document.querySelector("#resultGrid");
-const jsonInput = document.querySelector("#jsonInput");
-const exportButton = document.querySelector("#exportButton");
+let state = { ...initialState };
 
-function normalizeState(nextState) {
-  if (!nextState || !Array.isArray(nextState.testCases) || !Array.isArray(nextState.results)) {
-    throw new Error("JSON 需要包含 testCases 和 results 两个数组。");
+const datasetBrief = document.querySelector("#datasetBrief");
+const modelPlaceholders = document.querySelector("#modelPlaceholders");
+const sampleDetail = document.querySelector("#sampleDetail");
+const spectrogramPanel = document.querySelector("#spectrogramPanel");
+const sampleList = document.querySelector("#sampleList");
+const sampleCount = document.querySelector("#sampleCount");
+const loadNote = document.querySelector("#loadNote");
+
+function normalizeData(payload) {
+  if (!payload || typeof payload !== "object") {
+    throw new Error("raw-samples.json 必须是对象。");
+  }
+
+  if (!payload.dataset || !Array.isArray(payload.samples)) {
+    throw new Error("raw-samples.json 需要包含 dataset 和 samples。");
   }
 
   return {
-    testCases: nextState.testCases,
-    results: nextState.results
+    dataset: payload.dataset,
+    samples: payload.samples.map((sample) => ({
+      uttId: sample.uttId || "",
+      text: sample.text || "",
+      audioPath: sample.audioPath || "",
+      spectrogramPath: sample.spectrogramPath || "",
+      speakerId: sample.speakerId || "",
+      language: sample.language || "unknown",
+      durationSec: Number.isFinite(sample.durationSec) ? sample.durationSec : null
+    }))
   };
 }
 
-function unique(values) {
-  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b));
+function getSelectedSample() {
+  return state.samples.find((sample) => sample.uttId === state.selectedSampleId) || null;
 }
 
-function renderControls() {
-  const activeCase = caseSelect.value || state.testCases[0]?.id || "";
-  const activeModel = modelFilter.value || "all";
-
-  caseSelect.innerHTML = state.testCases
-    .map((item) => `<option value="${item.id}">${item.id}</option>`)
-    .join("");
-  caseSelect.value = state.testCases.some((item) => item.id === activeCase)
-    ? activeCase
-    : state.testCases[0]?.id || "";
-
-  const models = unique(state.results.map((item) => item.model));
-  modelFilter.innerHTML = [
-    '<option value="all">全部模型</option>',
-    ...models.map((model) => `<option value="${model}">${model}</option>`)
-  ].join("");
-  modelFilter.value = models.includes(activeModel) ? activeModel : "all";
+function formatDuration(value) {
+  return typeof value === "number" ? `${value.toFixed(2)} 秒` : "未提供";
 }
 
-function renderCaseInfo() {
-  const selectedCase = getSelectedCase();
-  caseText.textContent = selectedCase?.text || "暂无测试文本";
-  caseLanguage.textContent = selectedCase?.language || "unknown";
-  caseCategory.textContent = selectedCase?.category || "未分类";
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
-function getSelectedCase() {
-  return state.testCases.find((item) => item.id === caseSelect.value);
-}
-
-function getVisibleResults() {
-  const selectedCaseId = caseSelect.value;
-  const selectedModel = modelFilter.value;
-  return state.results.filter((item) => {
-    const sameCase = item.caseId === selectedCaseId;
-    const sameModel = selectedModel === "all" || item.model === selectedModel;
-    return sameCase && sameModel;
-  });
-}
-
-function renderResults() {
-  const rows = getVisibleResults();
-
-  if (!rows.length) {
-    resultGrid.innerHTML = '<div class="empty-state">当前测试用例还没有模型结果。</div>';
+function renderDatasetBrief() {
+  if (!state.dataset) {
+    datasetBrief.innerHTML = '<p class="empty-copy">等待加载原始样本数据。</p>';
     return;
   }
 
-  resultGrid.innerHTML = rows.map((item, index) => {
-    const audioMarkup = item.audioPath
-      ? `<audio controls preload="metadata" src="${item.audioPath}"></audio>`
-      : '<div class="missing-audio">还没有绑定音频文件。生成 wav 后，把文件放进 web/audio/ 对应模型目录，并在 JSON 里填写 audioPath。</div>';
+  const dataset = state.dataset;
+  const items = [
+    ["名称", dataset.name || "未命名"],
+    ["说话人", dataset.speakerId || "未提供"],
+    ["来源 ID", dataset.sourceSpeakerId || "未提供"],
+    ["样本数", `${dataset.sampleCount ?? state.samples.length}`]
+  ];
+
+  datasetBrief.innerHTML = `
+    <div class="brief-grid">
+      ${items.map(([label, value]) => `
+        <div class="brief-item">
+          <span class="brief-label">${escapeHtml(label)}</span>
+          <span class="brief-value">${escapeHtml(value)}</span>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderModelPlaceholders() {
+  modelPlaceholders.innerHTML = modelDefinitions.map((model) => `
+    <article class="model-placeholder">
+      <h3>${escapeHtml(model.name)}</h3>
+      <p class="model-status">${escapeHtml(model.stage)}</p>
+      <p class="detail-copy">${escapeHtml(model.description)}</p>
+    </article>
+  `).join("");
+}
+
+function renderSampleDetail() {
+  const sample = getSelectedSample();
+
+  if (!sample) {
+    sampleDetail.innerHTML = `
+      <div class="empty-state">
+        <p class="empty-copy">当前没有可展示的原始样本。加载成功后会在这里显示文本、音频和基础元信息。</p>
+      </div>
+    `;
+    return;
+  }
+
+  const audioMarkup = sample.audioPath
+    ? `
+      <div class="audio-shell">
+        <audio controls preload="metadata" src="${escapeHtml(sample.audioPath)}"></audio>
+      </div>
+    `
+    : `
+      <div class="empty-state">
+        <p class="empty-copy">这个样本还没有音频路径，请检查 <code>raw-samples.json</code> 中的 <code>audioPath</code>。</p>
+      </div>
+    `;
+
+  sampleDetail.innerHTML = `
+    <div class="sample-head">
+      <div>
+        <p class="eyebrow">Utterance</p>
+        <h3 class="sample-title">${escapeHtml(sample.uttId)}</h3>
+      </div>
+      <span class="sample-tag">${escapeHtml(sample.language)}</span>
+    </div>
+    <p class="sample-text">${escapeHtml(sample.text || "未提供文本")}</p>
+    <div class="meta-grid">
+      <div class="meta-pill">
+        <span class="meta-label">说话人</span>
+        <span class="meta-value">${escapeHtml(sample.speakerId || "未提供")}</span>
+      </div>
+      <div class="meta-pill">
+        <span class="meta-label">时长</span>
+        <span class="meta-value">${escapeHtml(formatDuration(sample.durationSec))}</span>
+      </div>
+      <div class="meta-pill">
+        <span class="meta-label">音频路径</span>
+        <span class="meta-value">${escapeHtml(sample.audioPath || "未提供")}</span>
+      </div>
+      <div class="meta-pill">
+        <span class="meta-label">频谱图路径</span>
+        <span class="meta-value">${escapeHtml(sample.spectrogramPath || "未提供")}</span>
+      </div>
+    </div>
+    ${audioMarkup}
+  `;
+}
+
+function renderSpectrogram() {
+  const sample = getSelectedSample();
+
+  if (!sample || !sample.spectrogramPath) {
+    spectrogramPanel.innerHTML = `
+      <div class="empty-state">
+        <p class="empty-copy">当前没有频谱图可显示。加载成功并选择样本后，会在这里展示对应图片。</p>
+      </div>
+    `;
+    return;
+  }
+
+  spectrogramPanel.innerHTML = `
+    <div class="spectrogram-shell">
+      <img class="spectrogram-image" src="${escapeHtml(sample.spectrogramPath)}" alt="${escapeHtml(sample.uttId)} 的频谱图">
+      <p class="spectrogram-caption">${escapeHtml(sample.uttId)} 的频谱图，用于快速检查能量分布与停顿结构。</p>
+    </div>
+  `;
+}
+
+function renderSampleList() {
+  sampleCount.textContent = `${state.samples.length} 条样本`;
+
+  if (!state.samples.length) {
+    sampleList.innerHTML = `
+      <div class="empty-state">
+        <p class="empty-copy">当前没有样本列表。请通过本地静态服务访问页面，或确认 <code>web/data/raw-samples.json</code> 可用。</p>
+      </div>
+    `;
+    return;
+  }
+
+  sampleList.innerHTML = state.samples.map((sample) => {
+    const isActive = sample.uttId === state.selectedSampleId;
+    const preview = sample.text.length > 42 ? `${sample.text.slice(0, 42)}…` : sample.text;
 
     return `
-      <article class="result-card" data-index="${index}">
-        <div>
-          <h3 class="model-title">${item.model}</h3>
-          <div class="meta-list">
-            <span>说话人：${item.speaker || "-"}</span>
-            <span>checkpoint：${item.checkpoint || "-"}</span>
-            <span>生成耗时：${item.generationTimeSec ?? "-"} s</span>
+      <button
+        class="sample-card${isActive ? " is-active" : ""}"
+        type="button"
+        data-utt-id="${escapeHtml(sample.uttId)}"
+        role="option"
+        aria-selected="${isActive ? "true" : "false"}"
+      >
+        <div class="sample-card-head">
+          <div>
+            <h4>${escapeHtml(sample.uttId)}</h4>
+            <p class="sample-subtitle">${escapeHtml(sample.speakerId || "未提供说话人")} · ${escapeHtml(formatDuration(sample.durationSec))}</p>
           </div>
+          <span class="sample-tag">${escapeHtml(sample.language)}</span>
         </div>
-        <div>
-          ${audioMarkup}
-        </div>
-        <div>
-          <div class="scores">
-            ${scoreInput(item, "naturalness", "自然度")}
-            ${scoreInput(item, "similarity", "相似度")}
-            ${scoreInput(item, "pronunciation", "发音")}
-          </div>
-          <textarea data-field="notes" data-result-id="${resultKey(item)}" placeholder="记录主观感受、错误发音、韵律问题等">${item.notes || ""}</textarea>
-        </div>
-      </article>
+        <p class="sample-preview">${escapeHtml(preview || "未提供文本")}</p>
+      </button>
     `;
   }).join("");
 }
 
-function scoreInput(item, field, label) {
-  return `
-    <label class="score-field">
-      <span>${label}</span>
-      <input
-        type="number"
-        min="1"
-        max="5"
-        step="0.5"
-        value="${item[field] ?? ""}"
-        data-field="${field}"
-        data-result-id="${resultKey(item)}"
-      >
-    </label>
-  `;
-}
-
-function resultKey(item) {
-  return `${item.caseId}::${item.model}::${item.speaker || ""}::${item.checkpoint || ""}`;
-}
-
-function updateResult(event) {
-  const field = event.target.dataset.field;
-  const key = event.target.dataset.resultId;
-  if (!field || !key) return;
-
-  const result = state.results.find((item) => resultKey(item) === key);
-  if (!result) return;
-
-  if (event.target.type === "number") {
-    result[field] = event.target.value === "" ? null : Number(event.target.value);
-  } else {
-    result[field] = event.target.value;
-  }
+function renderLoadNote() {
+  const hasMessage = Boolean(state.loadMessage);
+  loadNote.textContent = state.loadMessage;
+  loadNote.classList.toggle("is-hidden", !hasMessage);
 }
 
 function render() {
-  renderControls();
-  renderCaseInfo();
-  renderResults();
+  renderDatasetBrief();
+  renderModelPlaceholders();
+  renderSampleDetail();
+  renderSpectrogram();
+  renderSampleList();
+  renderLoadNote();
 }
 
-function downloadJson() {
-  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = "tts-results.json";
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
-async function importJson(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const text = await file.text();
-  try {
-    state = normalizeState(JSON.parse(text));
-    render();
-  } catch (error) {
-    alert(error instanceof Error ? error.message : "导入 JSON 失败。");
+function selectSample(sampleId) {
+  if (!state.samples.some((sample) => sample.uttId === sampleId)) {
+    return;
   }
+
+  state.selectedSampleId = sampleId;
+  renderSampleDetail();
+  renderSpectrogram();
+  renderSampleList();
 }
 
-async function loadInitialState() {
+async function loadInitialData() {
+  render();
+
   if (window.location.protocol === "file:") {
+    state.loadMessage = "当前通过 file:// 打开，浏览器不会读取本地 JSON。请启动本地静态服务后再访问这个页面。";
     render();
     return;
   }
 
   try {
-    const response = await fetch("./data/results.json", { cache: "no-store" });
+    const response = await fetch("./data/raw-samples.json", { cache: "no-store" });
     if (!response.ok) {
-      throw new Error(`加载失败：${response.status}`);
+      throw new Error(`HTTP ${response.status}`);
     }
 
-    state = normalizeState(await response.json());
+    const payload = normalizeData(await response.json());
+    state.dataset = payload.dataset;
+    state.samples = payload.samples;
+    state.selectedSampleId = payload.samples[0]?.uttId || null;
+    state.loadMessage = payload.samples.length
+      ? "原始样本数据已加载，可直接试听和查看频谱图。"
+      : "raw-samples.json 已加载，但当前没有样本。";
   } catch (error) {
-    console.warn("加载 web/data/results.json 失败，已回退到内置默认数据。", error);
+    console.warn("加载 raw-samples.json 失败", error);
+    state.loadMessage = "无法加载 web/data/raw-samples.json。请确认页面通过本地静态服务访问，并检查 JSON 路径是否存在。";
   }
 
   render();
 }
 
-caseSelect.addEventListener("change", render);
-modelFilter.addEventListener("change", render);
-resultGrid.addEventListener("input", updateResult);
-jsonInput.addEventListener("change", importJson);
-exportButton.addEventListener("click", downloadJson);
+sampleList.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-utt-id]");
+  if (!button) {
+    return;
+  }
 
-loadInitialState();
+  selectSample(button.dataset.uttId);
+});
+
+loadInitialData();

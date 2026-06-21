@@ -1,59 +1,94 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TTS 方法效果对比</title>
+    <title>TTS 原始音频工作台</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <div class="app-shell">
       <aside class="sidebar">
         <div class="brand">
-          <span class="brand-mark">TTS</span>
+          <span class="brand-mark">RAW</span>
           <div>
-            <h1>方法效果对比</h1>
-            <p>VITS / CosyVoice / VALL-E</p>
+            <p class="eyebrow">Homepage</p>
+            <h1>TTS 原始音频工作台</h1>
           </div>
         </div>
 
-        <label class="field">
-          <span>测试用例</span>
-          <select id="caseSelect"></select>
-        </label>
+        <p class="sidebar-intro">
+          首页现在会从 AISHELL-3 清单里随机抽取 10 条样本：优先核对文本、查看说话人分布，并在本地已落盘音频可用时直接试听。
+        </p>
 
-        <label class="field">
-          <span>筛选模型</span>
-          <select id="modelFilter">
-            <option value="all">全部模型</option>
-          </select>
-        </label>
+        <a class="nav-link" href="./dataset.html">进入数据集页面</a>
 
-        <div class="case-card">
-          <span class="eyebrow">当前文本</span>
-          <p id="caseText"></p>
-          <div class="case-meta">
-            <span id="caseLanguage"></span>
-            <span id="caseCategory"></span>
+        <section class="sidebar-section">
+          <div class="section-heading">
+            <h2>数据集摘要</h2>
+            <p>从 <code>web/data/raw-samples.json</code> 加载。</p>
           </div>
-        </div>
+          <div id="datasetBrief" class="info-card">
+            <p class="empty-copy">等待加载原始样本数据。</p>
+          </div>
+        </section>
 
-        <button id="exportButton" class="primary-button" type="button">导出评分 JSON</button>
+        <section class="sidebar-section">
+          <div class="section-heading">
+            <h2>模型工作区</h2>
+            <p>这里只保留明确的空状态，占位等待真实结果接入。</p>
+          </div>
+          <div id="modelPlaceholders" class="model-stack"></div>
+        </section>
       </aside>
 
       <main class="main">
-        <section class="toolbar">
+        <header class="main-header">
           <div>
-            <h2>音频对比工作台</h2>
-            <p>每一行是一种模型的结果。第一周先支持本地展示、试听、打分和记录备注。</p>
+            <p class="eyebrow">Raw Audio Workbench</p>
+            <h2>当前样本检查</h2>
+            <p class="header-copy">
+              每次打开页面都会重新抽样。你也可以手动重新抽取一批，再查看文本、音频、基础元信息和频谱图。
+            </p>
           </div>
-          <label class="file-loader">
-            <input id="jsonInput" type="file" accept="application/json">
-            <span>导入结果 JSON</span>
-          </label>
+          <div class="header-actions">
+            <button id="reshuffleButton" class="action-button" type="button">重新抽样</button>
+            <div id="loadNote" class="load-note is-hidden" role="status" aria-live="polite"></div>
+          </div>
+        </header>
+
+        <section class="main-grid">
+          <article class="panel detail-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Sample Detail</p>
+                <h3>样本详情</h3>
+              </div>
+            </div>
+            <div id="sampleDetail" class="panel-body"></div>
+          </article>
+
+          <article class="panel spectrogram-panel">
+            <div class="panel-header">
+              <div>
+                <p class="eyebrow">Spectrogram</p>
+                <h3>频谱图</h3>
+              </div>
+            </div>
+            <div id="spectrogramPanel" class="panel-body"></div>
+          </article>
         </section>
 
-        <section id="resultGrid" class="result-grid"></section>
+        <section class="panel sample-list-panel">
+          <div class="panel-header">
+            <div>
+              <p class="eyebrow">Sample List</p>
+              <h3>随机样本列表</h3>
+            </div>
+            <p id="sampleCount" class="panel-meta">0 条样本</p>
+          </div>
+          <div id="sampleList" class="sample-list" role="listbox" aria-label="原始样本列表"></div>
+        </section>
       </main>
     </div>
 

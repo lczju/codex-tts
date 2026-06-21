@@ -1,4 +1,4 @@
-{
+﻿{
   "testCases": [
     {
       "id": "case_001",
@@ -102,7 +102,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_001",
@@ -114,7 +114,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_002",
@@ -126,7 +126,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_002",
@@ -138,7 +138,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_003",
@@ -150,7 +150,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_003",
@@ -162,7 +162,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_004",
@@ -174,7 +174,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_004",
@@ -186,7 +186,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_005",
@@ -198,7 +198,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_005",
@@ -210,7 +210,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_006",
@@ -222,7 +222,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_006",
@@ -234,7 +234,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_007",
@@ -246,7 +246,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_007",
@@ -258,7 +258,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_008",
@@ -270,7 +270,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_008",
@@ -282,7 +282,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_009",
@@ -294,7 +294,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_009",
@@ -306,7 +306,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_010",
@@ -318,7 +318,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_010",
@@ -330,7 +330,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_011",
@@ -342,7 +342,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_011",
@@ -354,7 +354,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_012",
@@ -366,7 +366,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_012",
@@ -378,7 +378,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_013",
@@ -390,7 +390,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_013",
@@ -402,7 +402,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_014",
@@ -414,7 +414,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_014",
@@ -426,7 +426,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_015",
@@ -438,7 +438,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第二周把云端生成的 wav 放到 web/audio/cosyvoice/ 后填入路径。"
+      "notes": "占位结果：待接入 CosyVoice 音频后，补充 audioPath、耗时和试听备注。"
     },
     {
       "caseId": "case_015",
@@ -450,7 +450,7 @@
       "naturalness": null,
       "similarity": null,
       "pronunciation": null,
-      "notes": "第三周完成小数据微调后加入结果。"
+      "notes": "占位结果：待接入 VITS 音频后，补充 audioPath、耗时和试听备注。"
     }
   ]
 }
