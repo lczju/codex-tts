@@ -18,6 +18,18 @@
 https://<你的用户名>.github.io/<你的仓库名>/
 ```
 
+## 首次启用检查清单
+
+如果页面还没有出来，按这个顺序检查：
+
+1. 仓库默认分支是否是 `main` 或 `master`
+2. `.github/workflows/deploy-pages.yml` 是否已经推送到远端
+3. `Actions` 里 `Deploy GitHub Pages` 是否是绿色成功状态
+4. `Settings -> Pages` 里的 Source 是否显示为 `GitHub Actions`
+5. 仓库是否允许 GitHub Actions 运行
+
+如果工作流成功但页面仍未刷新，通常再等 1 到 3 分钟即可。
+
 ## 当前站点结构
 
 GitHub Pages 会把 `web/` 当成站点根目录发布，所以线上地址不需要再带 `/web/`。

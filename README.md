@@ -144,6 +144,28 @@ python -m http.server 8000
 
 如果直接以 `file://` 打开，页面会回退到内置样本数据。
 
+## GitHub 在线预览
+
+仓库已经带有 GitHub Pages 自动部署配置：
+
+- 工作流文件：`.github/workflows/deploy-pages.yml`
+- 发布目录：`web/`
+- 发布方式：推送到默认分支后由 GitHub Actions 自动部署
+
+首次启用时需要到仓库的 `Settings -> Pages` 中确认：
+
+1. `Source` 选择为 `GitHub Actions`
+2. 默认分支存在最新提交
+3. `Actions` 里的 `Deploy GitHub Pages` 已运行成功
+
+启用后，在线预览地址通常是：
+
+```text
+https://<你的用户名>.github.io/<你的仓库名>/
+```
+
+更多说明见 [docs/github-pages.md](docs/github-pages.md)。
+
 ## 后续推荐顺序
 
 1. 跑一轮 `CosyVoice` 最小推理并回填 `benchmark-results.json`
