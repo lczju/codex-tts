@@ -9,7 +9,6 @@ import shutil
 import struct
 import subprocess
 import sys
-import tempfile
 import uuid
 import wave
 from pathlib import Path
@@ -52,9 +51,11 @@ def write_test_wav(path: Path, frames: int = 1600, channels: int = 1, sample_wid
 
 
 def make_test_workspace() -> Path:
-    return Path(
-        tempfile.mkdtemp(prefix=f"generate-sample-spectrograms-tests-task1-{uuid.uuid4().hex}-")
-    )
+    scratch_root = Path.cwd() / ".tmp-tests"
+    scratch_root.mkdir(parents=True, exist_ok=True)
+    workspace = scratch_root / f"generate-sample-spectrograms-tests-{uuid.uuid4().hex}"
+    workspace.mkdir(parents=True, exist_ok=False)
+    return workspace
 
 
 def cleanup_path(path: Path) -> None:
@@ -74,24 +75,22 @@ def cleanup_path(path: Path) -> None:
 
 def cleanup_test_workspace(workspace: Path) -> None:
     cleanup_path(workspace)
+    scratch_root = Path.cwd() / ".tmp-tests"
+    if scratch_root.exists() and not any(scratch_root.iterdir()):
+        scratch_root.rmdir()
     pycache_path = TESTS_DIR / "__pycache__"
     if pycache_path.exists():
         cleanup_path(pycache_path)
 
 
-def test_make_test_workspace_creates_temp_dir_outside_repo_worktree():
+def test_make_test_workspace_creates_temp_dir_under_repo_scratch_space():
     workspace = make_test_workspace()
     repo_root = Path.cwd().resolve()
 
     try:
         assert workspace.exists()
         assert workspace.is_dir()
-        try:
-            workspace.resolve().relative_to(repo_root)
-        except ValueError:
-            pass
-        else:
-            raise AssertionError("Expected temp workspace outside repo worktree")
+        workspace.resolve().relative_to((repo_root / ".tmp-tests").resolve())
 
         try:
             workspace.resolve().relative_to(TESTS_DIR.resolve())
@@ -109,13 +108,13 @@ def test_build_default_paths_returns_project_relative_locations():
 
     paths = module.build_default_paths(project_root)
 
-    assert paths == {
-        "metadata_path": project_root / "datasets" / "raw" / "speaker_a" / "metadata.csv",
-        "source_wavs_dir": project_root / "datasets" / "raw" / "speaker_a" / "wavs",
-        "output_audio_dir": project_root / "web" / "audio" / "raw",
-        "output_spectrogram_dir": project_root / "web" / "assets" / "spectrograms",
-        "output_json_path": project_root / "web" / "data" / "raw-samples.json",
-    }
+    assert paths["metadata_path"] == project_root / "datasets" / "raw" / "speaker_a" / "metadata.csv"
+    assert paths["source_wavs_dir"] == project_root / "datasets" / "raw" / "speaker_a" / "wavs"
+    assert paths["manifest_path"] == project_root / "datasets" / "raw" / "public" / "aishell3" / "manifest.csv"
+    assert paths["archive_path"] == project_root / "datasets" / "downloads" / "data_aishell3.tgz"
+    assert paths["output_audio_dir"] == project_root / "web" / "media" / "audio" / "raw"
+    assert paths["output_spectrogram_dir"] == project_root / "web" / "media" / "spectrograms"
+    assert paths["output_json_path"] == project_root / "web" / "data" / "raw-samples.json"
 
 
 def test_parse_args_uses_project_relative_defaults():
@@ -126,8 +125,8 @@ def test_parse_args_uses_project_relative_defaults():
     assert args.project_root == Path.cwd()
     assert args.metadata_path == Path.cwd() / "datasets" / "raw" / "speaker_a" / "metadata.csv"
     assert args.source_wavs_dir == Path.cwd() / "datasets" / "raw" / "speaker_a" / "wavs"
-    assert args.output_audio_dir == Path.cwd() / "web" / "audio" / "raw"
-    assert args.output_spectrogram_dir == Path.cwd() / "web" / "assets" / "spectrograms"
+    assert args.output_audio_dir == Path.cwd() / "web" / "media" / "audio" / "raw"
+    assert args.output_spectrogram_dir == Path.cwd() / "web" / "media" / "spectrograms"
     assert args.output_json_path == Path.cwd() / "web" / "data" / "raw-samples.json"
     assert args.sample_limit == 10
     assert args.dataset_name == "AISHELL-3 speaker_a subset"
@@ -175,8 +174,8 @@ def test_main_generates_assets_from_cli_arguments():
 
         assert exit_code == 0
 
-        output_audio_path = workspace / "web" / "audio" / "raw" / "demo_001.wav"
-        output_spectrogram_path = workspace / "web" / "assets" / "spectrograms" / "demo_001.png"
+        output_audio_path = workspace / "web" / "media" / "audio" / "raw" / "demo_001.wav"
+        output_spectrogram_path = workspace / "web" / "media" / "spectrograms" / "demo_001.png"
         output_json_path = workspace / "web" / "data" / "raw-samples.json"
 
         assert output_audio_path.exists()
@@ -188,8 +187,8 @@ def test_main_generates_assets_from_cli_arguments():
             "sourceSpeakerId": "speaker_a",
             "sampleCount": 1,
         }
-        assert payload["samples"][0]["audioPath"] == "./audio/raw/demo_001.wav"
-        assert payload["samples"][0]["spectrogramPath"] == "./assets/spectrograms/demo_001.png"
+        assert payload["samples"][0]["audioPath"] == "./media/audio/raw/demo_001.wav"
+        assert payload["samples"][0]["spectrogramPath"] == "./media/spectrograms/demo_001.png"
     finally:
         cleanup_test_workspace(workspace)
 
@@ -361,8 +360,8 @@ def test_generate_assets_rejects_wav_paths_outside_source_root():
                 dataset_name="AISHELL-3 speaker_a subset",
                 source_speaker_id="SSB0005",
                 source_wavs_dir=wavs_dir,
-                output_audio_dir=workspace / "web" / "audio" / "raw",
-                output_spectrogram_dir=workspace / "web" / "assets" / "spectrograms",
+                output_audio_dir=workspace / "web" / "media" / "audio" / "raw",
+                output_spectrogram_dir=workspace / "web" / "media" / "spectrograms",
                 output_json_path=workspace / "web" / "data" / "raw-samples.json",
                 sample_limit=1,
             )
@@ -404,14 +403,14 @@ def test_generate_assets_accepts_metadata_paths_prefixed_with_source_dir_name():
             dataset_name="AISHELL-3 speaker_a subset",
             source_speaker_id="SSB0005",
             source_wavs_dir=wavs_dir,
-            output_audio_dir=workspace / "web" / "audio" / "raw",
-            output_spectrogram_dir=workspace / "web" / "assets" / "spectrograms",
+            output_audio_dir=workspace / "web" / "media" / "audio" / "raw",
+            output_spectrogram_dir=workspace / "web" / "media" / "spectrograms",
             output_json_path=workspace / "web" / "data" / "raw-samples.json",
             sample_limit=1,
         )
 
-        assert (workspace / "web" / "audio" / "raw" / "demo_001.wav").exists()
-        assert (workspace / "web" / "assets" / "spectrograms" / "demo_001.png").exists()
+        assert (workspace / "web" / "media" / "audio" / "raw" / "demo_001.wav").exists()
+        assert (workspace / "web" / "media" / "spectrograms" / "demo_001.png").exists()
     finally:
         cleanup_test_workspace(workspace)
 

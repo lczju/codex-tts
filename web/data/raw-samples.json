@@ -1,4 +1,4 @@
-{
+﻿{
   "dataset": {
     "name": "AISHELL-3 mixed speaker random sample",
     "sourceDataset": "AISHELL-3",
@@ -11,9 +11,9 @@
   "samples": [
     {
       "uttId": "SSB02410161",
-      "text": "娱乐反斗星",
-      "audioPath": "./audio/raw/SSB02410161.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB02410161.png",
+      "text": "濞变箰鍙嶆枟鏄?,
+      "audioPath": "./media/audio/raw/SSB02410161.wav",
+      "spectrogramPath": "./media/spectrograms/SSB02410161.png",
       "speakerId": "SSB0241",
       "language": "zh",
       "durationSec": 2.326,
@@ -21,9 +21,9 @@
     },
     {
       "uttId": "SSB03410265",
-      "text": "意味着中管金融企业在依照",
-      "audioPath": "./audio/raw/SSB03410265.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB03410265.png",
+      "text": "鎰忓懗鐫€涓閲戣瀺浼佷笟鍦ㄤ緷鐓?,
+      "audioPath": "./media/audio/raw/SSB03410265.wav",
+      "spectrogramPath": "./media/spectrograms/SSB03410265.png",
       "speakerId": "SSB0341",
       "language": "zh",
       "durationSec": 3.41,
@@ -31,9 +31,9 @@
     },
     {
       "uttId": "SSB06710128",
-      "text": "更加坐实了两人的恋情",
-      "audioPath": "./audio/raw/SSB06710128.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB06710128.png",
+      "text": "鏇村姞鍧愬疄浜嗕袱浜虹殑鎭嬫儏",
+      "audioPath": "./media/audio/raw/SSB06710128.wav",
+      "spectrogramPath": "./media/spectrograms/SSB06710128.png",
       "speakerId": "SSB0671",
       "language": "zh",
       "durationSec": 3.046,
@@ -41,9 +41,9 @@
     },
     {
       "uttId": "SSB09130033",
-      "text": "难逃细则不细怪圈在郝荣福看来",
-      "audioPath": "./audio/raw/SSB09130033.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB09130033.png",
+      "text": "闅鹃€冪粏鍒欎笉缁嗘€湀鍦ㄩ儩鑽ｇ鐪嬫潵",
+      "audioPath": "./media/audio/raw/SSB09130033.wav",
+      "spectrogramPath": "./media/spectrograms/SSB09130033.png",
       "speakerId": "SSB0913",
       "language": "zh",
       "durationSec": 4.401,
@@ -51,9 +51,9 @@
     },
     {
       "uttId": "SSB10560454",
-      "text": "基地里严重渗水",
-      "audioPath": "./audio/raw/SSB10560454.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB10560454.png",
+      "text": "鍩哄湴閲屼弗閲嶆笚姘?,
+      "audioPath": "./media/audio/raw/SSB10560454.wav",
+      "spectrogramPath": "./media/spectrograms/SSB10560454.png",
       "speakerId": "SSB1056",
       "language": "zh",
       "durationSec": 2.266,
@@ -61,9 +61,9 @@
     },
     {
       "uttId": "SSB15670405",
-      "text": "五是监督加强信息化建设",
-      "audioPath": "./audio/raw/SSB15670405.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB15670405.png",
+      "text": "浜旀槸鐩戠潱鍔犲己淇℃伅鍖栧缓璁?,
+      "audioPath": "./media/audio/raw/SSB15670405.wav",
+      "spectrogramPath": "./media/spectrograms/SSB15670405.png",
       "speakerId": "SSB1567",
       "language": "zh",
       "durationSec": 3.299,
@@ -71,9 +71,9 @@
     },
     {
       "uttId": "SSB15750377",
-      "text": "这些游击队员威胁要杀死人质",
-      "audioPath": "./audio/raw/SSB15750377.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB15750377.png",
+      "text": "杩欎簺娓稿嚮闃熷憳濞佽儊瑕佹潃姝讳汉璐?,
+      "audioPath": "./media/audio/raw/SSB15750377.wav",
+      "spectrogramPath": "./media/spectrograms/SSB15750377.png",
       "speakerId": "SSB1575",
       "language": "zh",
       "durationSec": 3.158,
@@ -81,9 +81,9 @@
     },
     {
       "uttId": "SSB16070259",
-      "text": "刘行喆澎湃资料腰斩的除了手里的股票",
-      "audioPath": "./audio/raw/SSB16070259.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB16070259.png",
+      "text": "鍒樿鍠嗘編婀冭祫鏂欒叞鏂╃殑闄や簡鎵嬮噷鐨勮偂绁?,
+      "audioPath": "./media/audio/raw/SSB16070259.wav",
+      "spectrogramPath": "./media/spectrograms/SSB16070259.png",
       "speakerId": "SSB1607",
       "language": "zh",
       "durationSec": 5.15,
@@ -91,9 +91,9 @@
     },
     {
       "uttId": "SSB17110468",
-      "text": "放开具备竞争条件的商品和服务价格",
-      "audioPath": "./audio/raw/SSB17110468.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB17110468.png",
+      "text": "鏀惧紑鍏峰绔炰簤鏉′欢鐨勫晢鍝佸拰鏈嶅姟浠锋牸",
+      "audioPath": "./media/audio/raw/SSB17110468.wav",
+      "spectrogramPath": "./media/spectrograms/SSB17110468.png",
       "speakerId": "SSB1711",
       "language": "zh",
       "durationSec": 5.462,
@@ -101,9 +101,9 @@
     },
     {
       "uttId": "SSB19560155",
-      "text": "彭泽县种子公司供种点",
-      "audioPath": "./audio/raw/SSB19560155.wav",
-      "spectrogramPath": "./assets/spectrograms/SSB19560155.png",
+      "text": "褰辰鍘跨瀛愬叕鍙镐緵绉嶇偣",
+      "audioPath": "./media/audio/raw/SSB19560155.wav",
+      "spectrogramPath": "./media/spectrograms/SSB19560155.png",
       "speakerId": "SSB1956",
       "language": "zh",
       "durationSec": 5.225,
@@ -111,3 +111,4 @@
     }
   ]
 }
+

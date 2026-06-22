@@ -3,78 +3,106 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TTS 原始音频工作台</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>TTS 实验工作台</title>
+    <link rel="stylesheet" href="./assets/css/app.css">
   </head>
   <body>
-    <div class="app-shell">
+    <div class="page-shell">
       <aside class="sidebar">
         <div class="brand">
-          <span class="brand-mark">RAW</span>
+          <span class="brand-mark">TTS</span>
           <div>
-            <p class="eyebrow">Listen First</p>
-            <h1>原始音频试听台</h1>
+            <p class="eyebrow">Single Entry</p>
+            <h1>实验工作台</h1>
           </div>
         </div>
 
-        <p class="sidebar-intro">先听音频，再快速切换样本。首页只保留试听所需的信息。</p>
+        <p class="sidebar-copy">
+          一个入口同时承载试听、数据集说明和 benchmark 占位结果，避免页面、脚本和数据各自维护一份历史。
+        </p>
 
-        <a class="nav-link" href="./dataset.html">进入数据集页面</a>
+        <nav class="sidebar-nav" aria-label="页面分区">
+          <a class="nav-link" href="#listenSection">试听工作台</a>
+          <a class="nav-link" href="#datasetSection">数据集说明</a>
+          <a class="nav-link" href="#benchmarkSection">Benchmark</a>
+        </nav>
 
-        <section class="sidebar-section">
-          <div class="section-heading">
-            <h2>当前批次</h2>
-            <p>简要摘要</p>
-          </div>
-          <div id="datasetBrief" class="info-card">
-            <p class="empty-copy">等待加载原始样本数据。</p>
-          </div>
-        </section>
-
-        <div id="modelPlaceholders" class="is-hidden" aria-hidden="true"></div>
-      </aside>
-
-      <main class="main">
-        <header class="main-header">
-          <div>
-            <p class="eyebrow">Raw Audio</p>
-            <h2>当前试听样本</h2>
-            <p class="header-copy">聚焦文本、播放器和频谱图，其余维护信息不在首页展开。</p>
-          </div>
-          <div class="header-actions">
-            <div id="loadNote" class="load-note is-hidden" role="status" aria-live="polite"></div>
-          </div>
-        </header>
-
-        <section class="hero-grid">
-          <article class="panel hero-panel">
-            <div id="sampleDetail"></div>
-          </article>
-
-          <article class="panel mini-panel">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Spectrogram</p>
-                <h3>频谱图</h3>
-              </div>
-            </div>
-            <div id="spectrogramPanel" class="panel-body"></div>
-          </article>
-        </section>
-
-        <section class="panel sample-list-panel">
-          <div class="panel-header">
+        <section class="sidebar-panel">
+          <div class="panel-heading">
             <div>
-              <p class="eyebrow">Sample List</p>
-              <h3>切换样本</h3>
+              <p class="eyebrow">Raw Samples</p>
+              <h2>当前批次</h2>
             </div>
             <p id="sampleCount" class="panel-meta">0 条样本</p>
           </div>
-          <div id="sampleList" class="sample-list" role="listbox" aria-label="原始样本列表"></div>
+          <div id="datasetBrief" class="panel-body"></div>
+        </section>
+
+        <div id="loadNote" class="load-note is-hidden" role="status" aria-live="polite"></div>
+      </aside>
+
+      <main class="main">
+        <section id="listenSection" class="content-section">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Listen First</p>
+              <h2>试听工作台</h2>
+            </div>
+          </header>
+
+          <div class="listen-grid">
+            <article class="panel hero-panel">
+              <div id="sampleDetail"></div>
+            </article>
+
+            <article class="panel compact-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Spectrogram</p>
+                  <h3>频谱图</h3>
+                </div>
+              </div>
+              <div id="spectrogramPanel" class="panel-body"></div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Sample List</p>
+                <h3>切换样本</h3>
+              </div>
+            </div>
+            <div id="sampleList" class="sample-list" role="listbox" aria-label="原始样本列表"></div>
+          </article>
+        </section>
+
+        <section id="datasetSection" class="content-section">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Dataset Overview</p>
+              <h2>数据集说明</h2>
+            </div>
+          </header>
+          <article class="panel">
+            <div id="datasetOverview" class="stack-block"></div>
+          </article>
+        </section>
+
+        <section id="benchmarkSection" class="content-section">
+          <header class="section-header">
+            <div>
+              <p class="eyebrow">Benchmark</p>
+              <h2>模型结果占位</h2>
+            </div>
+          </header>
+          <article class="panel">
+            <div id="benchmarkResults" class="stack-block"></div>
+          </article>
         </section>
       </main>
     </div>
 
-    <script src="app.js"></script>
+    <script src="./assets/js/app.js"></script>
   </body>
 </html>

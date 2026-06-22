@@ -1,0 +1,77 @@
+﻿{
+  "name": "AISHELL-3 / speaker_a",
+  "summary": "当前中文 baseline 使用 AISHELL-3 中抽取出的单说话人子集 speaker_a。本地页面现在只保留一个正式入口，同时承载试听、数据集说明和 benchmark 结果占位。",
+  "tags": [
+    "中文",
+    "AISHELL-3",
+    "speaker_a",
+    "单说话人",
+    "44.1kHz",
+    "PCM WAV"
+  ],
+  "stats": [
+    {
+      "label": "来源数据集",
+      "value": "AISHELL-3",
+      "note": "当前中文主线 baseline 的公开来源"
+    },
+    {
+      "label": "抽取说话人",
+      "value": "SSB0005",
+      "note": "仓库内统一命名为 speaker_a"
+    },
+    {
+      "label": "训练条数",
+      "value": "467",
+      "note": "datasets/raw/speaker_a/metadata.csv"
+    },
+    {
+      "label": "总时长",
+      "value": "0.673 h",
+      "note": "约 40.4 分钟，可先跑最小 baseline"
+    }
+  ],
+  "formats": [
+    {
+      "term": "音频格式",
+      "detail": "当前展示用音频通过 web/media/audio/raw/ 直接提供静态访问。"
+    },
+    {
+      "term": "文本标注",
+      "detail": "训练文本保存在 metadata.csv，并同步进入原始样本与后续训练流程。"
+    }
+  ],
+  "fields": [
+    {
+      "term": "utt_id",
+      "detail": "语句 ID，例如 SSB00050001。"
+    },
+    {
+      "term": "wav_path",
+      "detail": "相对路径，例如 wavs/SSB00050001.wav。"
+    },
+    {
+      "term": "text",
+      "detail": "中文训练文本。"
+    },
+    {
+      "term": "speaker_id",
+      "detail": "项目内统一为 speaker_a。"
+    },
+    {
+      "term": "language",
+      "detail": "当前固定为 zh。"
+    }
+  ],
+  "subset": [
+    {
+      "term": "当前子集",
+      "detail": "单说话人 speaker_a，用于试听、训练输入和 benchmark 结果回填。"
+    },
+    {
+      "term": "本地目录",
+      "detail": "datasets/raw/speaker_a/metadata.csv、source_summary.json、wavs/。"
+    }
+  ],
+  "structure": "web/\n  index.html\n  assets/css/app.css\n  assets/js/app.js\n  data/raw-samples.json\n  data/dataset-overview.json\n  data/benchmark-results.json\n  media/audio/raw/*.wav\n  media/spectrograms/*.png\ndatasets/raw/speaker_a/\n  metadata.csv\n  source_summary.json\n  wavs/*.wav"
+}

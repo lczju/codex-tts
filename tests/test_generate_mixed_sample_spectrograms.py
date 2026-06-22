@@ -140,8 +140,8 @@ def test_generate_assets_supports_mixed_speaker_manifest_sampling():
             archive_path=archive_path,
             dataset_name="AISHELL-3 mixed speaker random sample",
             source_dataset="AISHELL-3",
-            output_audio_dir=workspace / "web" / "audio" / "raw",
-            output_spectrogram_dir=workspace / "web" / "assets" / "spectrograms",
+            output_audio_dir=workspace / "web" / "media" / "audio" / "raw",
+            output_spectrogram_dir=workspace / "web" / "media" / "spectrograms",
             output_json_path=output_json_path,
             sample_limit=2,
             split="train",
@@ -165,9 +165,9 @@ def test_generate_assets_supports_mixed_speaker_manifest_sampling():
         unselected_ids = {row["utt_id"] for row in manifest_rows} - sampled_ids
         assert len(unselected_ids) == 2
         for utt_id in sampled_ids:
-            assert (workspace / "web" / "audio" / "raw" / f"{utt_id}.wav").exists()
+            assert (workspace / "web" / "media" / "audio" / "raw" / f"{utt_id}.wav").exists()
         for utt_id in unselected_ids:
-            assert not (workspace / "web" / "audio" / "raw" / f"{utt_id}.wav").exists()
+            assert not (workspace / "web" / "media" / "audio" / "raw" / f"{utt_id}.wav").exists()
     finally:
         cleanup_test_workspace(workspace)
 

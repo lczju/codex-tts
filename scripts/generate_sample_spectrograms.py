@@ -30,8 +30,8 @@ def build_default_paths(project_root: Path) -> dict[str, Path]:
         "source_wavs_dir": project_root / "datasets" / "raw" / "speaker_a" / "wavs",
         "manifest_path": project_root / "datasets" / "raw" / "public" / "aishell3" / "manifest.csv",
         "archive_path": project_root / "datasets" / "downloads" / "data_aishell3.tgz",
-        "output_audio_dir": project_root / "web" / "audio" / "raw",
-        "output_spectrogram_dir": project_root / "web" / "assets" / "spectrograms",
+        "output_audio_dir": project_root / "web" / "media" / "audio" / "raw",
+        "output_spectrogram_dir": project_root / "web" / "media" / "spectrograms",
         "output_json_path": project_root / "web" / "data" / "raw-samples.json",
     }
 

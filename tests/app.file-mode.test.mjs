@@ -1,4 +1,4 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
@@ -23,12 +23,13 @@ function createEnvironment() {
   const elements = new Map();
   const selectors = [
     "#datasetBrief",
-    "#modelPlaceholders",
     "#sampleDetail",
     "#spectrogramPanel",
     "#sampleList",
     "#sampleCount",
     "#loadNote",
+    "#datasetOverview",
+    "#benchmarkResults",
   ];
 
   for (const selector of selectors) {
@@ -58,7 +59,7 @@ function createEnvironment() {
 }
 
 async function main() {
-  const appPath = path.resolve("web", "app.js");
+  const appPath = path.resolve("web", "assets", "js", "app.js");
   const source = fs.readFileSync(appPath, "utf8");
   const { context, elements } = createEnvironment();
 
@@ -67,12 +68,16 @@ async function main() {
 
   const sampleDetail = elements.get("#sampleDetail").innerHTML;
   const datasetBrief = elements.get("#datasetBrief").innerHTML;
+  const datasetOverview = elements.get("#datasetOverview").innerHTML;
+  const benchmarkResults = elements.get("#benchmarkResults").innerHTML;
 
   assert.match(sampleDetail, /SSB\d{4}/);
   assert.match(sampleDetail, /说话人/);
   assert.match(sampleDetail, /时长/);
-  assert.doesNotMatch(sampleDetail, /音频路径/);
+  assert.doesNotMatch(sampleDetail, /audioPath/);
   assert.match(datasetBrief, /条样本/);
+  assert.match(datasetOverview, /AISHELL-3/);
+  assert.match(benchmarkResults, /VITS/);
 }
 
 await main();
