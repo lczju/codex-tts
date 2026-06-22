@@ -13,101 +13,116 @@
 
 const embeddedSampleData = {
   dataset: {
-    name: "AISHELL-3 speaker_a subset",
-    speakerId: "speaker_a",
-    sourceSpeakerId: "SSB0005",
-    sampleCount: 10
+    name: "AISHELL-3 mixed speaker random sample",
+    sourceDataset: "AISHELL-3",
+    speakerId: "",
+    speakerCount: 10,
+    sourceSpeakerId: "",
+    sampleCount: 10,
+    samplingMode: "embedded_fallback",
+    split: "train",
+    seed: null
   },
   samples: [
     {
-      uttId: "SSB00050001",
-      text: "广州女大学生登山失联四天警方找到疑似女尸",
-      audioPath: "./audio/raw/SSB00050001.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050001.png",
-      speakerId: "speaker_a",
+      uttId: "SSB02410161",
+      text: "娱乐反斗星",
+      audioPath: "./audio/raw/SSB02410161.wav",
+      spectrogramPath: "./assets/spectrograms/SSB02410161.png",
+      speakerId: "SSB0241",
       language: "zh",
-      durationSec: 9.444
+      durationSec: 2.326,
+      split: "train"
     },
     {
-      uttId: "SSB00050002",
-      text: "尊重科学规律的要求",
-      audioPath: "./audio/raw/SSB00050002.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050002.png",
-      speakerId: "speaker_a",
+      uttId: "SSB03410265",
+      text: "意味着中管金融企业在依照",
+      audioPath: "./audio/raw/SSB03410265.wav",
+      spectrogramPath: "./assets/spectrograms/SSB03410265.png",
+      speakerId: "SSB0341",
       language: "zh",
-      durationSec: 3.536
+      durationSec: 3.41,
+      split: "train"
     },
     {
-      uttId: "SSB00050003",
-      text: "七路无人售票",
-      audioPath: "./audio/raw/SSB00050003.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050003.png",
-      speakerId: "speaker_a",
+      uttId: "SSB06710128",
+      text: "更加坐实了两人的恋情",
+      audioPath: "./audio/raw/SSB06710128.wav",
+      spectrogramPath: "./assets/spectrograms/SSB06710128.png",
+      speakerId: "SSB0671",
       language: "zh",
-      durationSec: 2.709
+      durationSec: 3.046,
+      split: "train"
     },
     {
-      uttId: "SSB00050004",
-      text: "黑客宣布只要拨打某一个电话",
-      audioPath: "./audio/raw/SSB00050004.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050004.png",
-      speakerId: "speaker_a",
+      uttId: "SSB09130033",
+      text: "难逃细则不细怪圈在郝荣福看来",
+      audioPath: "./audio/raw/SSB09130033.wav",
+      spectrogramPath: "./assets/spectrograms/SSB09130033.png",
+      speakerId: "SSB0913",
       language: "zh",
-      durationSec: 4.438
+      durationSec: 4.401,
+      split: "train"
     },
     {
-      uttId: "SSB00050005",
-      text: "北京万科总经理刘肖的观点极具代表性",
-      audioPath: "./audio/raw/SSB00050005.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050005.png",
-      speakerId: "speaker_a",
+      uttId: "SSB10560454",
+      text: "基地里严重渗水",
+      audioPath: "./audio/raw/SSB10560454.wav",
+      spectrogramPath: "./assets/spectrograms/SSB10560454.png",
+      speakerId: "SSB1056",
       language: "zh",
-      durationSec: 6.486
+      durationSec: 2.266,
+      split: "train"
     },
     {
-      uttId: "SSB00050006",
-      text: "五百四十五万七千一百二十二",
-      audioPath: "./audio/raw/SSB00050006.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050006.png",
-      speakerId: "speaker_a",
+      uttId: "SSB15670405",
+      text: "五是监督加强信息化建设",
+      audioPath: "./audio/raw/SSB15670405.wav",
+      spectrogramPath: "./assets/spectrograms/SSB15670405.png",
+      speakerId: "SSB1567",
       language: "zh",
-      durationSec: 5.027
+      durationSec: 3.299,
+      split: "train"
     },
     {
-      uttId: "SSB00050007",
-      text: "广州大学城女尸案嫌疑犯变供称死者为女友",
-      audioPath: "./audio/raw/SSB00050007.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050007.png",
-      speakerId: "speaker_a",
+      uttId: "SSB15750377",
+      text: "这些游击队员威胁要杀死人质",
+      audioPath: "./audio/raw/SSB15750377.wav",
+      spectrogramPath: "./assets/spectrograms/SSB15750377.png",
+      speakerId: "SSB1575",
       language: "zh",
-      durationSec: 8.269
+      durationSec: 3.158,
+      split: "train"
     },
     {
-      uttId: "SSB00050008",
-      text: "搜狐娱乐讯据台湾媒体报道",
-      audioPath: "./audio/raw/SSB00050008.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050008.png",
-      speakerId: "speaker_a",
+      uttId: "SSB16070259",
+      text: "刘行喆澎湃资料腰斩的除了手里的股票",
+      audioPath: "./audio/raw/SSB16070259.wav",
+      spectrogramPath: "./assets/spectrograms/SSB16070259.png",
+      speakerId: "SSB1607",
       language: "zh",
-      durationSec: 4.905
+      durationSec: 5.15,
+      split: "train"
     },
     {
-      uttId: "SSB00050009",
-      text: "北郊",
-      audioPath: "./audio/raw/SSB00050009.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050009.png",
-      speakerId: "speaker_a",
+      uttId: "SSB17110468",
+      text: "放开具备竞争条件的商品和服务价格",
+      audioPath: "./audio/raw/SSB17110468.wav",
+      spectrogramPath: "./assets/spectrograms/SSB17110468.png",
+      speakerId: "SSB1711",
       language: "zh",
-      durationSec: 1.68
+      durationSec: 5.462,
+      split: "train"
     },
     {
-      uttId: "SSB00050010",
-      text: "职业联赛该干的让职业联赛干",
-      audioPath: "./audio/raw/SSB00050010.wav",
-      spectrogramPath: "./assets/spectrograms/SSB00050010.png",
-      speakerId: "speaker_a",
+      uttId: "SSB19560155",
+      text: "彭泽县种子公司供种点",
+      audioPath: "./audio/raw/SSB19560155.wav",
+      spectrogramPath: "./assets/spectrograms/SSB19560155.png",
+      speakerId: "SSB1956",
       language: "zh",
-      durationSec: 5.249
+      durationSec: 5.225,
+      split: "train"
     }
   ]
 };
@@ -139,7 +154,21 @@ function normalizeData(payload) {
   }
 
   return {
-    dataset: payload.dataset,
+    dataset: {
+      name: payload.dataset.name || "未命名",
+      sourceDataset: payload.dataset.sourceDataset || "",
+      speakerId: payload.dataset.speakerId || "",
+      speakerCount: Number.isFinite(payload.dataset.speakerCount)
+        ? payload.dataset.speakerCount
+        : null,
+      sourceSpeakerId: payload.dataset.sourceSpeakerId || "",
+      sampleCount: Number.isFinite(payload.dataset.sampleCount)
+        ? payload.dataset.sampleCount
+        : null,
+      samplingMode: payload.dataset.samplingMode || "",
+      split: payload.dataset.split || "",
+      seed: Number.isInteger(payload.dataset.seed) ? payload.dataset.seed : null
+    },
     samples: payload.samples.map((sample) => ({
       uttId: sample.uttId || "",
       text: sample.text || "",
@@ -147,7 +176,8 @@ function normalizeData(payload) {
       spectrogramPath: sample.spectrogramPath || "",
       speakerId: sample.speakerId || "",
       language: sample.language || "unknown",
-      durationSec: Number.isFinite(sample.durationSec) ? sample.durationSec : null
+      durationSec: Number.isFinite(sample.durationSec) ? sample.durationSec : null,
+      split: sample.split || ""
     }))
   };
 }
@@ -176,12 +206,31 @@ function renderDatasetBrief() {
   }
 
   const dataset = state.dataset;
-  const items = [
-    ["名称", dataset.name || "未命名"],
-    ["说话人", dataset.speakerId || "未提供"],
-    ["来源 ID", dataset.sourceSpeakerId || "未提供"],
-    ["样本数", `${dataset.sampleCount ?? state.samples.length}`]
-  ];
+  const items = [["名称", dataset.name || "未命名"]];
+
+  if (dataset.sourceDataset) {
+    items.push(["来源数据集", dataset.sourceDataset]);
+  }
+
+  if (dataset.speakerCount && dataset.speakerCount > 1) {
+    items.push(["说话人数", `${dataset.speakerCount}`]);
+  } else {
+    items.push(["说话人", dataset.speakerId || "未提供"]);
+  }
+
+  if (dataset.sourceSpeakerId) {
+    items.push(["来源 ID", dataset.sourceSpeakerId]);
+  }
+
+  if (dataset.split) {
+    items.push(["数据切分", dataset.split]);
+  }
+
+  if (dataset.samplingMode) {
+    items.push(["抽样方式", dataset.samplingMode]);
+  }
+
+  items.push(["样本数", `${dataset.sampleCount ?? state.samples.length}`]);
 
   datasetBrief.innerHTML = `
     <div class="brief-grid">
@@ -242,6 +291,10 @@ function renderSampleDetail() {
       <div class="meta-pill">
         <span class="meta-label">说话人</span>
         <span class="meta-value">${escapeHtml(sample.speakerId || "未提供")}</span>
+      </div>
+      <div class="meta-pill">
+        <span class="meta-label">数据切分</span>
+        <span class="meta-value">${escapeHtml(sample.split || "未提供")}</span>
       </div>
       <div class="meta-pill">
         <span class="meta-label">时长</span>
@@ -356,7 +409,7 @@ async function loadInitialData() {
   if (window.location.protocol === "file:") {
     applySamples(
       normalizeData(embeddedSampleData),
-      "当前通过 file:// 打开，已回退到内置样本数据，可直接试听和查看频谱图。"
+      "当前通过 file:// 打开，已回退到内置样本数据，可直接试听和查看频谱图。HTTP 模式下会优先加载离线抽样结果。"
     );
     render();
     return;
@@ -372,7 +425,7 @@ async function loadInitialData() {
     applySamples(
       payload,
       payload.samples.length
-        ? "原始样本数据已加载，可直接试听和查看频谱图。"
+        ? "离线抽样结果已加载，可直接试听和查看频谱图。"
         : "raw-samples.json 已加载，但当前没有样本。"
     );
   } catch (error) {
