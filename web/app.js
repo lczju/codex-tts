@@ -11,6 +11,107 @@
   }
 ];
 
+const embeddedSampleData = {
+  dataset: {
+    name: "AISHELL-3 speaker_a subset",
+    speakerId: "speaker_a",
+    sourceSpeakerId: "SSB0005",
+    sampleCount: 10
+  },
+  samples: [
+    {
+      uttId: "SSB00050001",
+      text: "广州女大学生登山失联四天警方找到疑似女尸",
+      audioPath: "./audio/raw/SSB00050001.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050001.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 9.444
+    },
+    {
+      uttId: "SSB00050002",
+      text: "尊重科学规律的要求",
+      audioPath: "./audio/raw/SSB00050002.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050002.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 3.536
+    },
+    {
+      uttId: "SSB00050003",
+      text: "七路无人售票",
+      audioPath: "./audio/raw/SSB00050003.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050003.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 2.709
+    },
+    {
+      uttId: "SSB00050004",
+      text: "黑客宣布只要拨打某一个电话",
+      audioPath: "./audio/raw/SSB00050004.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050004.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 4.438
+    },
+    {
+      uttId: "SSB00050005",
+      text: "北京万科总经理刘肖的观点极具代表性",
+      audioPath: "./audio/raw/SSB00050005.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050005.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 6.486
+    },
+    {
+      uttId: "SSB00050006",
+      text: "五百四十五万七千一百二十二",
+      audioPath: "./audio/raw/SSB00050006.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050006.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 5.027
+    },
+    {
+      uttId: "SSB00050007",
+      text: "广州大学城女尸案嫌疑犯变供称死者为女友",
+      audioPath: "./audio/raw/SSB00050007.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050007.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 8.269
+    },
+    {
+      uttId: "SSB00050008",
+      text: "搜狐娱乐讯据台湾媒体报道",
+      audioPath: "./audio/raw/SSB00050008.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050008.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 4.905
+    },
+    {
+      uttId: "SSB00050009",
+      text: "北郊",
+      audioPath: "./audio/raw/SSB00050009.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050009.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 1.68
+    },
+    {
+      uttId: "SSB00050010",
+      text: "职业联赛该干的让职业联赛干",
+      audioPath: "./audio/raw/SSB00050010.wav",
+      spectrogramPath: "./assets/spectrograms/SSB00050010.png",
+      speakerId: "speaker_a",
+      language: "zh",
+      durationSec: 5.249
+    }
+  ]
+};
+
 const initialState = {
   dataset: null,
   samples: [],
@@ -242,11 +343,21 @@ function selectSample(sampleId) {
   renderSampleList();
 }
 
+function applySamples(payload, loadMessage) {
+  state.dataset = payload.dataset;
+  state.samples = payload.samples;
+  state.selectedSampleId = payload.samples[0]?.uttId || null;
+  state.loadMessage = loadMessage;
+}
+
 async function loadInitialData() {
   render();
 
   if (window.location.protocol === "file:") {
-    state.loadMessage = "当前通过 file:// 打开，浏览器不会读取本地 JSON。请启动本地静态服务后再访问这个页面。";
+    applySamples(
+      normalizeData(embeddedSampleData),
+      "当前通过 file:// 打开，已回退到内置样本数据，可直接试听和查看频谱图。"
+    );
     render();
     return;
   }
@@ -258,15 +369,18 @@ async function loadInitialData() {
     }
 
     const payload = normalizeData(await response.json());
-    state.dataset = payload.dataset;
-    state.samples = payload.samples;
-    state.selectedSampleId = payload.samples[0]?.uttId || null;
-    state.loadMessage = payload.samples.length
-      ? "原始样本数据已加载，可直接试听和查看频谱图。"
-      : "raw-samples.json 已加载，但当前没有样本。";
+    applySamples(
+      payload,
+      payload.samples.length
+        ? "原始样本数据已加载，可直接试听和查看频谱图。"
+        : "raw-samples.json 已加载，但当前没有样本。"
+    );
   } catch (error) {
     console.warn("加载 raw-samples.json 失败", error);
-    state.loadMessage = "无法加载 web/data/raw-samples.json。请确认页面通过本地静态服务访问，并检查 JSON 路径是否存在。";
+    applySamples(
+      normalizeData(embeddedSampleData),
+      "无法加载 web/data/raw-samples.json，已回退到内置样本数据。请检查本地服务和 JSON 路径。"
+    );
   }
 
   render();
