@@ -46,6 +46,8 @@ __pycache__/
 .venv/
 venv/
 .test-generate-sample-spectrograms-*/
+.tmp/
+.tmp-tests/
 
 # Dataset downloads and large generated artifacts
 datasets/downloads/
@@ -56,3 +58,8 @@ datasets/raw/speaker_a/wavs/
 
 # Benchmark generated outputs
 web/audio/
+
+# Non-core working artifacts
+outputs/
+docs/superpowers/
+.agents/

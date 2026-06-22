@@ -13,7 +13,7 @@
 - benchmark 占位结果来自 `web/data/benchmark-results.json`
 - 原始音频与频谱图统一落在 `web/media/`
 
-## 目录结构
+## 精简后的目录结构
 
 ```text
 project0/
@@ -42,11 +42,38 @@ project0/
   scripts/
     prepare_aishell3.py
     generate_sample_spectrograms.py
+  tests/
+    app.test.mjs
+    test_generate_sample_spectrograms.py
   docs/
     project/
       architecture.md
       workflow.md
 ```
+
+## 哪些目录才是主线
+
+日常只需要重点看下面四块：
+
+- `web/`: 唯一正式页面入口和前端静态资源
+- `datasets/`: 数据集输入、公开数据清单和后续预处理落点
+- `scripts/`: 数据准备与试听资源生成脚本
+- `tests/`: 页面与脚本的回归校验
+
+下面这些内容不是业务主线：
+
+- `docs/project/`: 面向项目本身的结构与流程说明
+- `server-notes/`: 云端 GPU 和传输工具使用笔记
+- `.github/`: GitHub Pages 自动部署配置
+
+下面这些属于过程产物或一次性输出，已经被视为非核心并默认忽略：
+
+- `outputs/`
+- `docs/superpowers/`
+- `.tmp/`
+- `.tmp-tests/`
+- `.pytest_cache/`
+- `__pycache__/`
 
 ## 页面职责
 

@@ -8,6 +8,40 @@
 - `scripts/` 负责准备数据和生成前端展示资源
 - `web/` 负责本地试听、说明展示和 benchmark 结果承载
 
+## Reduced root
+
+为避免根目录继续膨胀，当前把仓库分成三层理解：
+
+### 1. Core
+
+这是业务主线，后续大多数改动都应该落在这里：
+
+- `web/`
+- `datasets/`
+- `scripts/`
+- `tests/`
+
+### 2. Support
+
+这些目录有价值，但不是主实验闭环本身：
+
+- `docs/project/`
+- `server-notes/`
+- `.github/`
+
+### 3. Non-core artifacts
+
+这些内容不再视为项目骨架的一部分，应当被当作过程产物或一次性输出处理：
+
+- `docs/superpowers/`
+- `outputs/`
+- `.tmp/`
+- `.tmp-tests/`
+- `.pytest_cache/`
+- `__pycache__/`
+
+如果后续又出现新的临时目录，优先加入 `.gitignore`，不要继续把根目录变成工作残留区。
+
 ## Single entry
 
 当前只维护一个正式页面入口：`web/index.html`
