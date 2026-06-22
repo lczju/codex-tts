@@ -69,8 +69,10 @@ async function main() {
   const datasetBrief = elements.get("#datasetBrief").innerHTML;
 
   assert.match(sampleDetail, /SSB\d{4}/);
-  assert.doesNotMatch(sampleDetail, /speaker_a/);
-  assert.match(datasetBrief, /说话人数/);
+  assert.match(sampleDetail, /说话人/);
+  assert.match(sampleDetail, /时长/);
+  assert.doesNotMatch(sampleDetail, /音频路径/);
+  assert.match(datasetBrief, /条样本/);
 }
 
 await main();

@@ -70,11 +70,19 @@ async function runApp(protocol = "file:", fetchImpl = null) {
 
 async function main() {
   const fileModeElements = await runApp("file:");
+  const fileModeDetail = fileModeElements.get("#sampleDetail").innerHTML;
+  const fileModeBrief = fileModeElements.get("#datasetBrief").innerHTML;
+  const fileModeModelArea = fileModeElements.get("#modelPlaceholders").innerHTML;
 
   assert.notEqual(fileModeElements.get("#sampleCount").textContent, "0 条样本");
-  assert.match(fileModeElements.get("#sampleDetail").innerHTML, /\.\/audio\/raw\/.+\.wav/);
+  assert.match(fileModeDetail, /audio controls/);
+  assert.match(fileModeDetail, /说话人/);
+  assert.match(fileModeDetail, /时长/);
+  assert.doesNotMatch(fileModeDetail, /音频路径/);
+  assert.doesNotMatch(fileModeDetail, /频谱图路径/);
   assert.match(fileModeElements.get("#spectrogramPanel").innerHTML, /\.\/assets\/spectrograms\/.+\.png/);
-  assert.match(fileModeElements.get("#sampleDetail").innerHTML, /广州女大学生登山失联四天警方找到疑似女尸/);
+  assert.match(fileModeBrief, /条样本/);
+  assert.equal(fileModeModelArea, "");
 
   let fetchCallCount = 0;
   const httpModeElements = await runApp("http:", async () => {
@@ -87,7 +95,7 @@ async function main() {
             name: "demo",
             speakerId: "speaker_a",
             sourceSpeakerId: "SSB0005",
-            sampleCount: 1
+            sampleCount: 1,
           },
           samples: [
             {
@@ -97,17 +105,18 @@ async function main() {
               spectrogramPath: "./assets/spectrograms/demo_001.png",
               speakerId: "speaker_a",
               language: "zh",
-              durationSec: 1.234
-            }
-          ]
+              durationSec: 1.234,
+            },
+          ],
         };
-      }
+      },
     };
   });
 
   assert.equal(fetchCallCount, 1);
   assert.equal(httpModeElements.get("#sampleCount").textContent, "1 条样本");
   assert.match(httpModeElements.get("#sampleDetail").innerHTML, /demo_001/);
+  assert.doesNotMatch(httpModeElements.get("#sampleDetail").innerHTML, /audioPath/);
   assert.match(httpModeElements.get("#spectrogramPanel").innerHTML, /demo_001\.png/);
 }
 

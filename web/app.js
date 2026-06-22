@@ -1,16 +1,3 @@
-﻿const modelDefinitions = [
-  {
-    name: "CosyVoice",
-    stage: "待接入",
-    description: "模型结果区保留为空状态。接入真实生成音频后，再补充试听与对比入口。"
-  },
-  {
-    name: "VITS",
-    stage: "待接入",
-    description: "当前首页不展示伪结果。等 VITS 样本准备好后，再回到这里接入模型面板。"
-  }
-];
-
 const embeddedSampleData = {
   dataset: {
     name: "AISHELL-3 mixed speaker random sample",
@@ -206,52 +193,21 @@ function renderDatasetBrief() {
   }
 
   const dataset = state.dataset;
-  const items = [["名称", dataset.name || "未命名"]];
-
-  if (dataset.sourceDataset) {
-    items.push(["来源数据集", dataset.sourceDataset]);
-  }
-
-  if (dataset.speakerCount && dataset.speakerCount > 1) {
-    items.push(["说话人数", `${dataset.speakerCount}`]);
-  } else {
-    items.push(["说话人", dataset.speakerId || "未提供"]);
-  }
-
-  if (dataset.sourceSpeakerId) {
-    items.push(["来源 ID", dataset.sourceSpeakerId]);
-  }
-
-  if (dataset.split) {
-    items.push(["数据切分", dataset.split]);
-  }
-
-  if (dataset.samplingMode) {
-    items.push(["抽样方式", dataset.samplingMode]);
-  }
-
-  items.push(["样本数", `${dataset.sampleCount ?? state.samples.length}`]);
+  const sampleTotal = dataset.sampleCount ?? state.samples.length;
+  const speakerText = dataset.speakerCount && dataset.speakerCount > 1
+    ? `${dataset.speakerCount} 位说话人`
+    : dataset.speakerId || "单说话人";
+  const sourceText = dataset.sourceDataset || dataset.name || "当前批次";
 
   datasetBrief.innerHTML = `
-    <div class="brief-grid">
-      ${items.map(([label, value]) => `
-        <div class="brief-item">
-          <span class="brief-label">${escapeHtml(label)}</span>
-          <span class="brief-value">${escapeHtml(value)}</span>
-        </div>
-      `).join("")}
-    </div>
+    <p class="detail-copy">${escapeHtml(sourceText)}</p>
+    <p class="brief-value">${escapeHtml(`${sampleTotal} 条样本`)}</p>
+    <p class="detail-copy">当前批次可直接切换试听，来源为 ${escapeHtml(speakerText)}。</p>
   `;
-}
 
-function renderModelPlaceholders() {
-  modelPlaceholders.innerHTML = modelDefinitions.map((model) => `
-    <article class="model-placeholder">
-      <h3>${escapeHtml(model.name)}</h3>
-      <p class="model-status">${escapeHtml(model.stage)}</p>
-      <p class="detail-copy">${escapeHtml(model.description)}</p>
-    </article>
-  `).join("");
+  if (modelPlaceholders) {
+    modelPlaceholders.innerHTML = "";
+  }
 }
 
 function renderSampleDetail() {
@@ -274,42 +230,39 @@ function renderSampleDetail() {
     `
     : `
       <div class="empty-state">
-        <p class="empty-copy">这个样本还没有音频路径，请检查 <code>raw-samples.json</code> 中的 <code>audioPath</code>。</p>
+        <p class="empty-copy">这个样本还没有可试听音频，请检查 <code>raw-samples.json</code> 中的 <code>audioPath</code>。</p>
       </div>
     `;
 
   sampleDetail.innerHTML = `
-    <div class="sample-head">
-      <div>
-        <p class="eyebrow">Utterance</p>
-        <h3 class="sample-title">${escapeHtml(sample.uttId)}</h3>
+    <div class="hero-body">
+      <div class="hero-head">
+        <div>
+          <p class="eyebrow">Utterance</p>
+          <h3 class="sample-title">${escapeHtml(sample.uttId)}</h3>
+        </div>
+        <span class="sample-tag">${escapeHtml(sample.language)}</span>
       </div>
-      <span class="sample-tag">${escapeHtml(sample.language)}</span>
+      <div class="hero-text">
+        <p class="eyebrow">Text</p>
+        <p class="sample-text">${escapeHtml(sample.text || "未提供文本")}</p>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <span class="meta-label">说话人</span>
+          <span class="meta-value">${escapeHtml(sample.speakerId || "未提供")}</span>
+        </div>
+        <div class="hero-stat">
+          <span class="meta-label">时长</span>
+          <span class="meta-value">${escapeHtml(formatDuration(sample.durationSec))}</span>
+        </div>
+        <div class="hero-stat">
+          <span class="meta-label">切分</span>
+          <span class="meta-value">${escapeHtml(sample.split || "未提供")}</span>
+        </div>
+      </div>
+      ${audioMarkup}
     </div>
-    <p class="sample-text">${escapeHtml(sample.text || "未提供文本")}</p>
-    <div class="meta-grid">
-      <div class="meta-pill">
-        <span class="meta-label">说话人</span>
-        <span class="meta-value">${escapeHtml(sample.speakerId || "未提供")}</span>
-      </div>
-      <div class="meta-pill">
-        <span class="meta-label">数据切分</span>
-        <span class="meta-value">${escapeHtml(sample.split || "未提供")}</span>
-      </div>
-      <div class="meta-pill">
-        <span class="meta-label">时长</span>
-        <span class="meta-value">${escapeHtml(formatDuration(sample.durationSec))}</span>
-      </div>
-      <div class="meta-pill">
-        <span class="meta-label">音频路径</span>
-        <span class="meta-value">${escapeHtml(sample.audioPath || "未提供")}</span>
-      </div>
-      <div class="meta-pill">
-        <span class="meta-label">频谱图路径</span>
-        <span class="meta-value">${escapeHtml(sample.spectrogramPath || "未提供")}</span>
-      </div>
-    </div>
-    ${audioMarkup}
   `;
 }
 
@@ -328,7 +281,7 @@ function renderSpectrogram() {
   spectrogramPanel.innerHTML = `
     <div class="spectrogram-shell">
       <img class="spectrogram-image" src="${escapeHtml(sample.spectrogramPath)}" alt="${escapeHtml(sample.uttId)} 的频谱图">
-      <p class="spectrogram-caption">${escapeHtml(sample.uttId)} 的频谱图，用于快速检查能量分布与停顿结构。</p>
+      <p class="spectrogram-caption">频谱图用于辅助观察停顿和能量分布。</p>
     </div>
   `;
 }
@@ -378,7 +331,6 @@ function renderLoadNote() {
 
 function render() {
   renderDatasetBrief();
-  renderModelPlaceholders();
   renderSampleDetail();
   renderSpectrogram();
   renderSampleList();

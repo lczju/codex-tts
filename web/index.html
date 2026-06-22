@@ -12,62 +12,46 @@
         <div class="brand">
           <span class="brand-mark">RAW</span>
           <div>
-            <p class="eyebrow">Homepage</p>
-            <h1>TTS 原始音频工作台</h1>
+            <p class="eyebrow">Listen First</p>
+            <h1>原始音频试听台</h1>
           </div>
         </div>
 
-        <p class="sidebar-intro">
-          首页当前展示的是从 AISHELL-3 全量清单里离线随机抽取的一批样本：优先核对文本、查看说话人分布，并在本地已落盘音频可用时直接试听。
-        </p>
+        <p class="sidebar-intro">先听音频，再快速切换样本。首页只保留试听所需的信息。</p>
 
         <a class="nav-link" href="./dataset.html">进入数据集页面</a>
 
         <section class="sidebar-section">
           <div class="section-heading">
-            <h2>数据集摘要</h2>
-            <p>从 <code>web/data/raw-samples.json</code> 加载。</p>
+            <h2>当前批次</h2>
+            <p>简要摘要</p>
           </div>
           <div id="datasetBrief" class="info-card">
             <p class="empty-copy">等待加载原始样本数据。</p>
           </div>
         </section>
 
-        <section class="sidebar-section">
-          <div class="section-heading">
-            <h2>模型工作区</h2>
-            <p>这里只保留明确的空状态，占位等待真实结果接入。</p>
-          </div>
-          <div id="modelPlaceholders" class="model-stack"></div>
-        </section>
+        <div id="modelPlaceholders" class="is-hidden" aria-hidden="true"></div>
       </aside>
 
       <main class="main">
         <header class="main-header">
           <div>
-            <p class="eyebrow">Raw Audio Workbench</p>
-            <h2>当前样本检查</h2>
-            <p class="header-copy">
-              这 10 条样本由本地 Python 脚本离线抽样并生成。重新运行脚本后，这里的文本、音频、基础元信息和频谱图会一起刷新。
-            </p>
+            <p class="eyebrow">Raw Audio</p>
+            <h2>当前试听样本</h2>
+            <p class="header-copy">聚焦文本、播放器和频谱图，其余维护信息不在首页展开。</p>
           </div>
           <div class="header-actions">
             <div id="loadNote" class="load-note is-hidden" role="status" aria-live="polite"></div>
           </div>
         </header>
 
-        <section class="main-grid">
-          <article class="panel detail-panel">
-            <div class="panel-header">
-              <div>
-                <p class="eyebrow">Sample Detail</p>
-                <h3>样本详情</h3>
-              </div>
-            </div>
-            <div id="sampleDetail" class="panel-body"></div>
+        <section class="hero-grid">
+          <article class="panel hero-panel">
+            <div id="sampleDetail"></div>
           </article>
 
-          <article class="panel spectrogram-panel">
+          <article class="panel mini-panel">
             <div class="panel-header">
               <div>
                 <p class="eyebrow">Spectrogram</p>
@@ -82,7 +66,7 @@
           <div class="panel-header">
             <div>
               <p class="eyebrow">Sample List</p>
-              <h3>随机样本列表</h3>
+              <h3>切换样本</h3>
             </div>
             <p id="sampleCount" class="panel-meta">0 条样本</p>
           </div>
